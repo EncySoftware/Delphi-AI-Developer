@@ -63,14 +63,14 @@ end;
 
 procedure TDelphiAIDevCodeCompletionSearch.Process(const AContext: IOTAKeyContext);
 begin
-  FSettings.ValidateFillingSelectedAICodeCompletion(TShowMsg.No);
+  FSettings.ValidateFillingAICodeComplOptions(TShowMsg.No);
 
   Screen.Cursor := crHourGlass;
   try
     Self.ProcessQuestions(AContext);
 
     try
-      FAIRequest.AiUse(FSettings.CodeCompletionAIDefault).ProcessSend(FQuestions.Text);
+      FAIRequest.ProcessSend(FQuestions.Text);
     except
       Abort;
     end;

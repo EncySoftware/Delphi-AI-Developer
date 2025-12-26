@@ -11,7 +11,6 @@ type
   TC4DWizardMenuContextList = procedure(const MenuContextList: IInterfaceList) of object;
 
   {$SCOPEDENUMS ON}
-  TC4DAiAvailable = (Gemini, OpenAI, Groq, Mistral, Ollama);
   TC4DLanguage = (en, ptBR, es);
   TC4DExtensionsFiles = (None, PAS, DFM, FMX, DPR, DPK, DPROJ, GROUPPROJ, ZIP, BMP, INI, ALL);
   TC4DExtensionsOfFiles = set of TC4DExtensionsFiles;
@@ -24,11 +23,6 @@ type
   TAutoFreeField = (Yes, No);
   TShowMsg = (Yes, No);
   {$SCOPEDENUMS OFF}
-
-  TC4DAiAvailableHelper = record helper for TC4DAiAvailable
-    function ToString: string;
-    function ToStringWithCreator: string;
-  end;
 
   TC4DLanguageHelper = record helper for TC4DLanguage
     function ToString: string;
@@ -67,31 +61,6 @@ implementation
 
 uses
   DelphiAIDev.Consts;
-
-{ TAIsAvailableHelper }
-function TC4DAiAvailableHelper.ToString: string;
-begin
-  case Self of
-    TC4DAiAvailable.Gemini:
-      Result := 'Gemini';
-    TC4DAiAvailable.OpenAI:
-      Result := 'ChatGPT';
-  else
-    Result := GetEnumName(TypeInfo(TC4DAiAvailable), Integer(Self));
-  end;
-end;
-
-function TC4DAiAvailableHelper.ToStringWithCreator: string;
-begin
-  case Self of
-    TC4DAiAvailable.Gemini:
-      Result := 'Gemini (Google)';
-    TC4DAiAvailable.OpenAI:
-      Result := 'ChatGPT (OpenAI)';
-  else
-    Result := GetEnumName(TypeInfo(TC4DAiAvailable), Integer(Self));
-  end;
-end;
 
 { TC4DLanguageHelper }
 function TC4DLanguageHelper.ToString: string;

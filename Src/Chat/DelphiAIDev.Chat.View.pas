@@ -49,11 +49,7 @@ type
     pnWait: TPanel;
     ShapeWait: TShape;
     pnWaitCaption: TPanel;
-    pMenuCurrentAI: TPopupMenu;
-    Gemini1: TMenuItem;
-    ChatGPT1: TMenuItem;
     pnBackButtons: TPanel;
-    lbCurrentAI: TLabel;
     StatusBar1: TStatusBar;
     pnCommands: TPanel;
     btnCopy: TSpeedButton;
@@ -73,9 +69,6 @@ type
     btnDefaultsQuestions: TButton;
     pMenuQuestions: TPopupMenu;
     btnCleanAll: TSpeedButton;
-    Groq1: TMenuItem;
-    Mistral1: TMenuItem;
-    Ollama1: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure cBoxSizeFontKeyPress(Sender: TObject; var Key: Char);
     procedure Cut1Click(Sender: TObject);
@@ -90,9 +83,6 @@ type
     procedure mmQuestionChange(Sender: TObject);
     procedure mmQuestionKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormActivate(Sender: TObject);
-    procedure lbCurrentAIClick(Sender: TObject);
-    procedure Gemini1Click(Sender: TObject);
-    procedure pMenuCurrentAIPopup(Sender: TObject);
     procedure btnMoreActionsClick(Sender: TObject);
     procedure SaveContentToFile1Click(Sender: TObject);
     procedure btnCreateNewUnitClick(Sender: TObject);
@@ -122,7 +112,6 @@ type
     function GetSelectedTextOrAllOrAbort: string;
     procedure WaitingFormOFF;
     procedure WaitingFormON;
-    procedure ConfLabelCurrentAI;
     procedure ConfScreenOnShow;
     procedure ChangeUseCurrentUnitCode;
     procedure ChangeCodeOnly;
@@ -219,8 +208,6 @@ end;
 
 procedure TDelphiAIDevChatView.FormActivate(Sender: TObject);
 begin
-  Self.ConfLabelCurrentAI;
-
   if not FQuestionOnShow.Trim.IsEmpty then
   begin
     mmQuestion.Lines.Clear;
@@ -428,7 +415,7 @@ begin
   if mmQuestion.Lines.Text.Trim.IsEmpty then
     TUtils.ShowMsgAndAbort('No questions have been added', mmQuestion);
 
-  FSettings.ValidateFillingSelectedAI;
+  FSettings.ValidateFillingAIChatOptions;
 
   mmReturn.Lines.Clear;
   Self.WaitingFormON;
@@ -451,7 +438,7 @@ begin
     begin
       try
         try
-          FAI.AiUse(FSettings.AIDefault).ProcessSend(LQuestion);
+          FAI.ProcessSend(LQuestion);
         except
           on E: Exception do
             TThread.Synchronize(nil,
@@ -523,11 +510,6 @@ end;
 procedure TDelphiAIDevChatView.Last;
 begin
   SendMessage(mmReturn.Handle, WM_VSCROLL, SB_BOTTOM, 0);
-end;
-
-procedure TDelphiAIDevChatView.lbCurrentAIClick(Sender: TObject);
-begin
-  pMenuCurrentAI.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
 function TDelphiAIDevChatView.GetSelectedTextOrAllFromReturn: string;
@@ -606,62 +588,6 @@ begin
     mmReturn.Color := clWindow;
     mmReturn.SelAttributes.Color := clWindowText;
   end;
-end;
-
-procedure TDelphiAIDevChatView.pMenuCurrentAIPopup(Sender: TObject);
-begin
-  Gemini1.Checked := False;
-  ChatGPT1.Checked := False;
-  Groq1.Checked := False;
-  Mistral1.Checked := False;
-  Ollama1.Checked := False;
-  case FSettings.AIDefault of
-    TC4DAiAvailable.Gemini:
-      Gemini1.Checked := True;
-    TC4DAiAvailable.OpenAI:
-      ChatGPT1.Checked := True;
-    TC4DAiAvailable.Groq:
-      Groq1.Checked := True;
-    TC4DAiAvailable.Mistral:
-      Mistral1.Checked := True;
-    TC4DAiAvailable.Ollama:
-      Ollama1.Checked := True;
-  end;
-end;
-
-procedure TDelphiAIDevChatView.ConfLabelCurrentAI;
-begin
-  lbCurrentAI.Caption := FSettings.AIDefault.ToString;
-
-  case FSettings.AIDefault of
-    TC4DAiAvailable.Gemini:
-      lbCurrentAI.Hint := FSettings.ModelGemini;
-    TC4DAiAvailable.OpenAI:
-      lbCurrentAI.Hint := FSettings.ModelOpenAI;
-    TC4DAiAvailable.Groq:
-      lbCurrentAI.Hint := FSettings.ModelGroq;
-    TC4DAiAvailable.Mistral:
-      lbCurrentAI.Hint := FSettings.ModelMistral;
-    TC4DAiAvailable.Ollama:
-      lbCurrentAI.Hint := FSettings.ModelOllama;
-  end;
-
-  lbCurrentAI.Repaint;
-  Self.Repaint;
-end;
-
-procedure TDelphiAIDevChatView.Gemini1Click(Sender: TObject);
-var
-  LTag: Integer;
-begin
-  //*SEVERAL
-  LTag := TMenuItem(Sender).Tag;
-  if not(LTag in [0, 1, 2, 3, 4])then
-    Exit;
-
-  FSettings.AIDefault := TC4DAiAvailable(LTag);
-  FSettings.SaveData;
-  Self.ConfLabelCurrentAI;
 end;
 
 procedure TDelphiAIDevChatView.btnCleanAllClick(Sender: TObject);

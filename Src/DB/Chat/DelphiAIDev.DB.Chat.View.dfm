@@ -154,23 +154,6 @@ object DelphiAIDevDBChatView: TDelphiAIDevDBChatView
       Padding.Bottom = 2
       ParentBackground = False
       TabOrder = 2
-      object lbCurrentAI: TLabel
-        Left = 0
-        Top = 3
-        Width = 56
-        Height = 22
-        Cursor = crHandPoint
-        Hint = 'AI being used'
-        Margins.Left = 0
-        Margins.Top = 0
-        Margins.Right = 0
-        Margins.Bottom = 0
-        Align = alLeft
-        Caption = 'lbCurrentAI'
-        PopupMenu = pMenuCurrentAI
-        OnClick = lbCurrentAIClick
-        ExplicitHeight = 13
-      end
       object btnSend: TButton
         AlignWithMargins = True
         Left = 864
@@ -965,35 +948,6 @@ object DelphiAIDevDBChatView: TDelphiAIDevDBChatView
       Caption = 'Clear'
       ShortCut = 16430
       OnClick = Clear1Click
-    end
-  end
-  object pMenuCurrentAI: TPopupMenu
-    OnPopup = pMenuCurrentAIPopup
-    Left = 26
-    Top = 231
-    object Gemini1: TMenuItem
-      Caption = 'Gemini'
-      OnClick = Gemini1Click
-    end
-    object ChatGPT1: TMenuItem
-      Tag = 1
-      Caption = 'ChatGPT'
-      OnClick = Gemini1Click
-    end
-    object Groq1: TMenuItem
-      Tag = 2
-      Caption = 'Groq'
-      OnClick = Gemini1Click
-    end
-    object Mistral1: TMenuItem
-      Tag = 3
-      Caption = 'Mistral'
-      OnClick = Gemini1Click
-    end
-    object Ollama1: TMenuItem
-      Tag = 4
-      Caption = 'Ollama (offline)'
-      OnClick = Gemini1Click
     end
   end
   object pMenuMoreActions: TPopupMenu

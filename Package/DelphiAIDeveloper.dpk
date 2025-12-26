@@ -60,8 +60,6 @@ contains
   DelphiAIDev.AI.Facade in '..\Src\AI\DelphiAIDev.AI.Facade.pas',
   DelphiAIDev.Chat.View in '..\Src\Chat\DelphiAIDev.Chat.View.pas' {DelphiAIDevChatView},
   DelphiAIDev.Chat.ProcessResponse in '..\Src\Chat\DelphiAIDev.Chat.ProcessResponse.pas',
-  DelphiAIDev.AI.Gemini in '..\Src\AI\DelphiAIDev.AI.Gemini.pas',
-  DelphiAIDev.AI.ChatGPT in '..\Src\AI\DelphiAIDev.AI.ChatGPT.pas',
   DelphiAIDev.AI.Interfaces in '..\Src\AI\DelphiAIDev.AI.Interfaces.pas',
   DelphiAIDev.Interfaces in '..\Src\Interfaces\DelphiAIDev.Interfaces.pas',
   DelphiAIDev.ModuleCreator.OTA in '..\Src\ModuleCreator\DelphiAIDev.ModuleCreator.OTA.pas',
@@ -80,7 +78,6 @@ contains
   DelphiAIDev.DefaultsQuestions.PopupMenu in '..\Src\DefaultsQuestions\DelphiAIDev.DefaultsQuestions.PopupMenu.pas',
   DelphiAIDev.Utils.ABMenuAction in '..\Src\Utils\DelphiAIDev.Utils.ABMenuAction.pas',
   DelphiAIDev.IDE.Splash in '..\Src\IDE\Splash\DelphiAIDev.IDE.Splash.pas',
-  DelphiAIDev.AI.Groq in '..\Src\AI\DelphiAIDev.AI.Groq.pas',
   DelphiAIDev.PopupMenuProjects in '..\Src\PopupMenuProjects\DelphiAIDev.PopupMenuProjects.pas',
   DelphiAIDev.PopupMenuProjects.Item in '..\Src\PopupMenuProjects\DelphiAIDev.PopupMenuProjects.Item.pas',
   DelphiAIDev.DefaultsQuestions.View in '..\Src\DefaultsQuestions\DelphiAIDev.DefaultsQuestions.View.pas' {DelphiAIDevDefaultsQuestionsView},
@@ -100,7 +97,6 @@ contains
   DelphiAIDev.MetaInfo in '..\Src\MetaInfo\DelphiAIDev.MetaInfo.pas',
   DelphiAIDev.DB.References.View in '..\Src\DB\References\DelphiAIDev.DB.References.View.pas' {DelphiAIDevDBReferencesView},
   DelphiAIDev.Utils.DBGrids in '..\Src\Utils\DelphiAIDev.Utils.DBGrids.pas',
-  DelphiAIDev.AI.Ollama in '..\Src\AI\DelphiAIDev.AI.Ollama.pas',
   DelphiAIDev.Projects.AddEdit.View in '..\Src\Projects\DelphiAIDev.Projects.AddEdit.View.pas' {DelphiAIDevProjectsAddEditView},
   DelphiAIDev.DB.Utils in '..\Src\DB\Utils\DelphiAIDev.DB.Utils.pas',
   DelphiAIDev.PopupMenuProjects.OnExecute in '..\Src\PopupMenuProjects\DelphiAIDev.PopupMenuProjects.OnExecute.pas',
@@ -114,7 +110,6 @@ contains
   DelphiAIDev.CodeCompletion.Search in '..\Src\CodeCompletion\DelphiAIDev.CodeCompletion.Search.pas',
   DelphiAIDev.Test.Client in '..\Src\Test\DelphiAIDev.Test.Client.pas',
   DelphiAIDev.CodeCompletion.KeyTab in '..\Src\CodeCompletion\DelphiAIDev.CodeCompletion.KeyTab.pas',
-  DelphiAIDev.AI.Response in '..\Src\AI\DelphiAIDev.AI.Response.pas',
-  DelphiAIDev.AI.Mistral in '..\Src\AI\DelphiAIDev.AI.Mistral.pas';
+  DelphiAIDev.AI.Response in '..\Src\AI\DelphiAIDev.AI.Response.pas';
 
 end.

@@ -15,11 +15,6 @@ type
     function GetContent: TStrings;
   end;
 
-  IDelphiAIDevAI = interface
-    ['{B82FACA6-66DA-4DC0-877F-8263B5C172C1}']
-    function GetResponse(const AQuestion: string): IDelphiAIDevAIResponse;
-  end;
-
 implementation
 
 end.

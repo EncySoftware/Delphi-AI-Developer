@@ -37,120 +37,66 @@ type
     btnIAsOnline: TButton;
     pnPreferencesBack: TPanel;
     GroupBox2: TGroupBox;
-    Label11: TLabel;
     Label4: TLabel;
-    cBoxAIDefault: TComboBox;
-    ColorBoxColorHighlightCodeDelphi: TColorBox;
-    ckColorHighlightCodeDelphiUse: TCheckBox;
     cBoxLanguageQuestions: TComboBox;
-    TabSheet3: TTabSheet;
-    pnIAsOffLineBack: TPanel;
-    GroupBox1: TGroupBox;
-    Panel1: TPanel;
-    Label12: TLabel;
-    Label13: TLabel;
-    Label14: TLabel;
-    btnApiKeyOllamaView: TSpeedButton;
-    lbLinkOllama02: TLabel;
-    lbLinkOllama03: TLabel;
-    lbLinkOllama01: TLabel;
-    edtBaseUrlOllama: TEdit;
-    edtApiKeyOllama: TEdit;
-    cBoxModelOllama: TComboBox;
     TabSheet4: TTabSheet;
     pnCodeCompletionBack: TPanel;
     pnIAsOnLineBack: TPanel;
-    BevelGroq: TBevel;
-    BevelChatGPT: TBevel;
-    BevelGemini: TBevel;
-    gBoxGemini: TGroupBox;
-    pnGeminiBack: TPanel;
+    BevelAIChat: TBevel;
+    gBoxAIChat: TGroupBox;
+    pnAIChat: TPanel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
-    lbLinkGemini01: TLabel;
-    lbLinkGemini02: TLabel;
-    btnApiKeyGeminiView: TSpeedButton;
-    lbLinkGemini03: TLabel;
-    edtBaseUrlGemini: TEdit;
-    edtApiKeyGemini: TEdit;
-    cBoxModelGemini: TComboBox;
-    gBoxOpenAI: TGroupBox;
-    pnOpenAIBack: TPanel;
-    Label1: TLabel;
-    Label3: TLabel;
-    Label2: TLabel;
-    lbLinkGpt01: TLabel;
-    btnApiKeyOpenAIView: TSpeedButton;
-    lbLinkGpt02: TLabel;
-    edtBaseUrlOpenAI: TEdit;
-    edtApiKeyOpenAI: TEdit;
-    cBoxModelOpenAI: TComboBox;
-    gBoxGroq: TGroupBox;
-    pnGroqBack: TPanel;
-    Label8: TLabel;
-    Label9: TLabel;
-    Label10: TLabel;
-    lbLinkGroq01: TLabel;
-    btnApiKeyGroqView: TSpeedButton;
-    lbLinkGroq02: TLabel;
-    lbLinkGroq03: TLabel;
-    edtBaseUrlGroq: TEdit;
-    edtApiKeyGroq: TEdit;
-    cBoxModelGroq: TComboBox;
+    btnApiKeyAIChat: TSpeedButton;
+    edtBaseUrlAIChat: TEdit;
+    edtApiKeyAIChat: TEdit;
+    cBoxModelAIChat: TComboBox;
     pnBody: TPanel;
-    btnIAsOffline: TButton;
     btnCodeCompletion: TButton;
     Bevel5: TBevel;
     GroupBox3: TGroupBox;
     Panel2: TPanel;
     ckCodeCompletionUse: TCheckBox;
-    Label15: TLabel;
-    cBoxCodeCompletionAIDefault: TComboBox;
     ColorBoxCodeCompletionSuggestionColor: TColorBox;
     ckCodeCompletionSuggestionColorUse: TCheckBox;
     Label16: TLabel;
     gboxData: TGroupBox;
     btnOpenDataFolder: TButton;
     edtCodeCompletionShortcutInvoke: TEdit;
-    Label17: TLabel;
     Label18: TLabel;
     mmCodeCompletionDefaultPrompt: TMemo;
+    GroupBox1: TGroupBox;
+    Panel1: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    btnApiKeyCodeCompl: TSpeedButton;
+    editBaseUrlCodeCompl: TEdit;
+    editApiKeyCodeCompl: TEdit;
+    cBoxModelCodeCompl: TComboBox;
+    GroupBox4: TGroupBox;
+    Panel3: TPanel;
+    ckColorHighlightCodeDelphiUse: TCheckBox;
+    ColorBoxColorHighlightCodeDelphi: TColorBox;
     Label19: TLabel;
     mmDefaultPrompt: TMemo;
-    gBoxMistral: TGroupBox;
-    pnMistralBack: TPanel;
-    Label20: TLabel;
-    Label21: TLabel;
-    Label22: TLabel;
-    lbLinkMistral01: TLabel;
-    btnApiKeyMistralView: TSpeedButton;
-    lbLinkMistral02: TLabel;
-    lbLinkMistral03: TLabel;
-    edtBaseUrlMistral: TEdit;
-    edtApiKeyMistral: TEdit;
-    cBoxModelMistral: TComboBox;
-    BevelMistral: TBevel;
+    Bevel1: TBevel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnCloseClick(Sender: TObject);
-    procedure lbLinkGpt01Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnConfirmClick(Sender: TObject);
-    procedure btnApiKeyGeminiViewClick(Sender: TObject);
-    procedure btnApiKeyOpenAIViewClick(Sender: TObject);
+    procedure btnApiKeyAIChatClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure lbRestoreDefaultsClick(Sender: TObject);
     procedure ckColorHighlightCodeDelphiUseClick(Sender: TObject);
-    procedure btnApiKeyGroqViewClick(Sender: TObject);
-    procedure btnApiKeyOllamaViewClick(Sender: TObject);
     procedure btnPreferencesClick(Sender: TObject);
     procedure btnIAsOnlineClick(Sender: TObject);
-    procedure btnIAsOfflineClick(Sender: TObject);
     procedure btnCodeCompletionClick(Sender: TObject);
     procedure btnOpenDataFolderClick(Sender: TObject);
     procedure ckCodeCompletionSuggestionColorUseClick(Sender: TObject);
-    procedure btnApiKeyMistralViewClick(Sender: TObject);
+    procedure btnApiKeyCodeComplClick(Sender: TObject);
   private
     FSettings: TDelphiAIDevSettings;
     procedure SaveSettings;
@@ -158,8 +104,6 @@ type
     procedure ConfigScreen;
     procedure ConfigFieldsColorHighlightDelphi;
     procedure FillcBoxLanguageQuestions;
-    procedure FillcBoxAIDefault;
-    procedure FillcBoxCodeCompletionAIDefault;
     procedure ShowPanel(const AButton: TButton; const APanel: TPanel);
     procedure PanelsSetParent;
     procedure ValidateCodeCompletionShortcutInvoke;
@@ -186,8 +130,6 @@ begin
 
   Self.PanelsSetParent;
   Self.FillcBoxLanguageQuestions;
-  Self.FillcBoxAIDefault;
-  Self.FillcBoxCodeCompletionAIDefault;
 end;
 
 procedure TDelphiAIDevSettingsView.FormShow(Sender: TObject);
@@ -211,64 +153,21 @@ begin
     cBoxLanguageQuestions.Items.Add(LItem.ToString);
 end;
 
-procedure TDelphiAIDevSettingsView.FillcBoxAIDefault;
-var
-  LItem: TC4DAiAvailable;
-begin
-  cBoxAIDefault.Items.Clear;
-  for LItem := Low(TC4DAiAvailable) to High(TC4DAiAvailable) do
-    cBoxAIDefault.Items.Add(LItem.ToString);
-end;
-
-procedure TDelphiAIDevSettingsView.FillcBoxCodeCompletionAIDefault;
-var
-  LItem: TC4DAiAvailable;
-begin
-  cBoxCodeCompletionAIDefault.Items.Clear;
-  for LItem := Low(TC4DAiAvailable) to High(TC4DAiAvailable) do
-    cBoxCodeCompletionAIDefault.Items.Add(LItem.ToString);
-end;
-
 procedure TDelphiAIDevSettingsView.ConfigScreen;
 var
   LColor: TColor;
 begin
   LColor := TUtilsOTA.ActiveThemeColorLink;
-  lbLinkGemini01.Font.Color := LColor;
-  lbLinkGemini02.Font.Color := LColor;
-  lbLinkGemini03.Font.Color := LColor;
-  lbLinkGpt01.Font.Color := LColor;
-  lbLinkGpt02.Font.Color := LColor;
-  lbLinkGroq01.Font.Color := LColor;
-  lbLinkGroq02.Font.Color := LColor;
-  lbLinkGroq03.Font.Color := LColor;
-  lbLinkMistral01.Font.Color := LColor;
-  lbLinkMistral02.Font.Color := LColor;
-  lbLinkMistral03.Font.Color := LColor;
-  lbRestoreDefaults.Font.Color := LColor;
-  lbLinkOllama01.Font.Color := LColor;
-  lbLinkOllama02.Font.Color := LColor;
-  lbLinkOllama03.Font.Color := LColor;
 end;
 
-procedure TDelphiAIDevSettingsView.btnApiKeyGeminiViewClick(Sender: TObject);
+procedure TDelphiAIDevSettingsView.btnApiKeyAIChatClick(Sender: TObject);
 begin
-  TUtils.TogglePasswordChar(edtApiKeyGemini);
+  TUtils.TogglePasswordChar(edtApiKeyAIChat);
 end;
 
-procedure TDelphiAIDevSettingsView.btnApiKeyOpenAIViewClick(Sender: TObject);
+procedure TDelphiAIDevSettingsView.btnApiKeyCodeComplClick(Sender: TObject);
 begin
-  TUtils.TogglePasswordChar(edtApiKeyOpenAI);
-end;
-
-procedure TDelphiAIDevSettingsView.btnApiKeyGroqViewClick(Sender: TObject);
-begin
-  TUtils.TogglePasswordChar(edtApiKeyGroq);
-end;
-
-procedure TDelphiAIDevSettingsView.btnApiKeyMistralViewClick(Sender: TObject);
-begin
-  TUtils.TogglePasswordChar(edtApiKeyMistral);
+  TUtils.TogglePasswordChar(editApiKeyCodeCompl);
 end;
 
 procedure TDelphiAIDevSettingsView.btnCloseClick(Sender: TObject);
@@ -289,33 +188,17 @@ begin
   end;
 end;
 
-procedure TDelphiAIDevSettingsView.lbLinkGpt01Click(Sender: TObject);
-begin
-  //**SEVERAL
-  TUtils.OpenLink(TLabel(Sender).Hint.Trim);
-end;
-
 procedure TDelphiAIDevSettingsView.lbRestoreDefaultsClick(Sender: TObject);
 var
-  LApiKeyGemini: string;
-  LApiKeyOpenAI: string;
-  LApiKeyGroq: string;
-  LApiKeyMistral: string;
-  LApiKeyOllama: string;
+  LApiKeyAIChat: string;
+  LApiKeyCodeCmpl: string;
 begin
-  LApiKeyGemini := FSettings.ApiKeyGemini;
-  LApiKeyOpenAI := FSettings.ApiKeyOpenAI;
-  LApiKeyGroq := FSettings.ApiKeyGroq;
-  LApiKeyMistral := FSettings.ApiKeyMistral;
-  LApiKeyOllama := FSettings.ApiKeyOllama;
-
+  LApiKeyAIChat := FSettings.ApiKeyAIChat;
+  LApiKeyCodeCmpl := FSettings.ApiKeyCodeCmpl;
   FSettings.LoadDefaults;
 
-  FSettings.ApiKeyGemini := LApiKeyGemini;
-  FSettings.ApiKeyOpenAI := LApiKeyOpenAI;
-  FSettings.ApiKeyGroq := LApiKeyGroq;
-  FSettings.ApiKeyMistral := LApiKeyMistral;
-  FSettings.ApiKeyOllama := LApiKeyOllama;
+  FSettings.ApiKeyAIChat := LApiKeyAIChat;
+  FSettings.ApiKeyCodeCmpl := LApiKeyCodeCmpl;
 
   Self.LoadSettings;
 end;
@@ -367,7 +250,6 @@ end;
 procedure TDelphiAIDevSettingsView.LoadSettings;
 begin
   cBoxLanguageQuestions.ItemIndex := Integer(FSettings.LanguageQuestions);
-  cBoxAIDefault.ItemIndex := Integer(FSettings.AIDefault);
 
   ckColorHighlightCodeDelphiUse.Checked := FSettings.ColorHighlightCodeDelphiUse;
   ColorBoxColorHighlightCodeDelphi.Selected := FSettings.ColorHighlightCodeDelphi;
@@ -375,97 +257,57 @@ begin
   mmDefaultPrompt.Lines.Text := FSettings.DefaultPrompt;
 
   ckCodeCompletionUse.Checked := FSettings.CodeCompletionUse;
-  cBoxCodeCompletionAIDefault.ItemIndex := Integer(FSettings.CodeCompletionAIDefault);
   ckCodeCompletionSuggestionColorUse.Checked := FSettings.CodeCompletionSuggestionColorUse;
   ColorBoxCodeCompletionSuggestionColor.Selected := FSettings.CodeCompletionSuggestionColor;
   edtCodeCompletionShortcutInvoke.Text := FSettings.CodeCompletionShortcutInvoke;
   mmCodeCompletionDefaultPrompt.Lines.Text := FSettings.CodeCompletionDefaultPrompt;
 
-  edtBaseUrlGemini.Text := FSettings.BaseUrlGemini;
-  cBoxModelGemini.ItemIndex := cBoxModelGemini.Items.IndexOf(FSettings.ModelGemini);
-  if cBoxModelGemini.ItemIndex < 0 then
-    cBoxModelGemini.Text := FSettings.ModelGemini;
-  edtApiKeyGemini.Text := FSettings.ApiKeyGemini;
+  edtBaseUrlAIChat.Text := FSettings.BaseUrlAIChat;
+  cBoxModelAIChat.ItemIndex := cBoxModelAIChat.Items.IndexOf(FSettings.ModelAIChat);
+  if cBoxModelAIChat.ItemIndex < 0 then
+    cBoxModelAIChat.Text := FSettings.ModelAIChat;
+  edtApiKeyAIChat.Text := FSettings.ApiKeyAIChat;
 
-  edtBaseUrlOpenAI.Text := FSettings.BaseUrlOpenAI;
-  cBoxModelOpenAI.ItemIndex := cBoxModelOpenAI.Items.IndexOf(FSettings.ModelOpenAI);
-  if cBoxModelOpenAI.ItemIndex < 0 then
-    cBoxModelOpenAI.Text := FSettings.ModelOpenAI;
-  edtApiKeyOpenAI.Text := FSettings.ApiKeyOpenAI;
-
-  edtBaseUrlGroq.Text := FSettings.BaseUrlGroq;
-  cBoxModelGroq.ItemIndex := cBoxModelGroq.Items.IndexOf(FSettings.ModelGroq);
-  if cBoxModelGroq.ItemIndex < 0 then
-    cBoxModelGroq.Text := FSettings.ModelGroq;
-  edtApiKeyGroq.Text := FSettings.ApiKeyGroq;
-
-  edtBaseUrlMistral.Text := FSettings.BaseUrlMistral;
-  cBoxModelMistral.ItemIndex := cBoxModelMistral.Items.IndexOf(FSettings.ModelMistral);
-  if cBoxModelMistral.ItemIndex < 0 then
-    cBoxModelMistral.Text := FSettings.ModelMistral;
-  edtApiKeyMistral.Text := FSettings.ApiKeyMistral;
-
-  edtBaseUrlOllama.Text := FSettings.BaseUrlOllama;
-  cBoxModelOllama.ItemIndex := cBoxModelOllama.Items.IndexOf(FSettings.ModelOllama);
-  if cBoxModelOllama.ItemIndex < 0 then
-    cBoxModelOllama.Text := FSettings.ModelOllama;
-  edtApiKeyOllama.Text := FSettings.ApiKeyOllama;
+  editBaseUrlCodeCompl.Text := FSettings.BaseUrlCodeCmpl;
+  cBoxModelCodeCompl.ItemIndex := cBoxModelCodeCompl.Items.IndexOf(FSettings.ModelCodeCmpl);
+  if cBoxModelCodeCompl.ItemIndex < 0 then
+    cBoxModelCodeCompl.Text := FSettings.ModelCodeCmpl;
+  editApiKeyCodeCompl.Text := FSettings.ApiKeyCodeCmpl;
 end;
 
 procedure TDelphiAIDevSettingsView.SaveSettings;
 begin
   FSettings.LanguageQuestions := TC4DLanguage(cBoxLanguageQuestions.ItemIndex);
-  FSettings.AIDefault := TC4DAiAvailable(cBoxAIDefault.ItemIndex);
 
   FSettings.ColorHighlightCodeDelphiUse := ckColorHighlightCodeDelphiUse.Checked;
   FSettings.ColorHighlightCodeDelphi := ColorBoxColorHighlightCodeDelphi.Selected;
   FSettings.DefaultPrompt := mmDefaultPrompt.Lines.Text;
 
   FSettings.CodeCompletionUse := ckCodeCompletionUse.Checked;
-  FSettings.CodeCompletionAIDefault := TC4DAiAvailable(cBoxCodeCompletionAIDefault.ItemIndex);
   FSettings.CodeCompletionSuggestionColorUse := ckCodeCompletionSuggestionColorUse.Checked;
   FSettings.CodeCompletionSuggestionColor := ColorBoxCodeCompletionSuggestionColor.Selected;
   FSettings.CodeCompletionShortcutInvoke := edtCodeCompletionShortcutInvoke.Text;
   FSettings.CodeCompletionDefaultPrompt := mmCodeCompletionDefaultPrompt.Lines.Text;
 
-  FSettings.BaseUrlGemini := edtBaseUrlGemini.Text;
-  FSettings.ModelGemini := cBoxModelGemini.Text;
-  FSettings.ApiKeyGemini := edtApiKeyGemini.Text;
+  FSettings.BaseUrlAIChat := edtBaseUrlAIChat.Text;
+  FSettings.ModelAIChat := cBoxModelAIChat.Text;
+  FSettings.ApiKeyAIChat := edtApiKeyAIChat.Text;
 
-  FSettings.BaseUrlOpenAI := edtBaseUrlOpenAI.Text;
-  FSettings.ModelOpenAI := cBoxModelOpenAI.Text;
-  FSettings.ApiKeyOpenAI := edtApiKeyOpenAI.Text;
-
-  FSettings.BaseUrlGroq := edtBaseUrlGroq.Text;
-  FSettings.ModelGroq := cBoxModelGroq.Text;
-  FSettings.ApiKeyGroq := edtApiKeyGroq.Text;
-
-  FSettings.BaseUrlMistral := edtBaseUrlMistral.Text;
-  FSettings.ModelMistral := cBoxModelMistral.Text;
-  FSettings.ApiKeyMistral := edtApiKeyMistral.Text;
-
-  FSettings.BaseUrlOllama := edtBaseUrlOllama.Text;
-  FSettings.ModelOllama := cBoxModelOllama.Text;
-  FSettings.ApiKeyOllama := edtApiKeyOllama.Text;
+  FSettings.BaseUrlCodeCmpl := editBaseUrlCodeCompl.Text;
+  FSettings.ModelCodeCmpl := cBoxModelCodeCompl.Text;
+  FSettings.ApiKeyCodeCmpl := editApiKeyCodeCompl.Text;
 
   FSettings.SaveData;
-end;
-
-procedure TDelphiAIDevSettingsView.btnApiKeyOllamaViewClick(Sender: TObject);
-begin
-  TUtils.TogglePasswordChar(edtApiKeyOllama);
 end;
 
 procedure TDelphiAIDevSettingsView.PanelsSetParent;
 begin
   pnPreferencesBack.Visible := False;
   pnIAsOnLineBack.Visible := False;
-  pnIAsOffLineBack.Visible := False;
   pnCodeCompletionBack.Visible := False;
 
   pnPreferencesBack.Parent := pnBody;
   pnIAsOnLineBack.Parent := pnBody;
-  pnIAsOffLineBack.Parent := pnBody;
   pnCodeCompletionBack.Parent := pnBody;
   PageControl1.Visible := False;
 
@@ -488,14 +330,9 @@ var
 begin
   LPathFolder := TUtils.GetPathFolderRoot;
   if not DirectoryExists(LPathFolder) then
-    TUtils.ShowMsg('Forder not found: ' + LPathFolder);
+    TUtils.ShowMsg('Folder not found: ' + LPathFolder);
 
   TUtils.OpenFolder(LPathFolder);
-end;
-
-procedure TDelphiAIDevSettingsView.btnIAsOfflineClick(Sender: TObject);
-begin
-  Self.ShowPanel(TButton(Sender), pnIAsOffLineBack);
 end;
 
 procedure TDelphiAIDevSettingsView.btnCodeCompletionClick(Sender: TObject);
@@ -507,13 +344,11 @@ procedure TDelphiAIDevSettingsView.ShowPanel(const AButton: TButton; const APane
 begin
   btnPreferences.Default := False;
   btnIAsOnline.Default := False;
-  btnIAsOffline.Default := False;
   btnCodeCompletion.Default := False;
   AButton.Default := True;
 
   pnPreferencesBack.Visible := False;
   pnIAsOnLineBack.Visible := False;
-  pnIAsOffLineBack.Visible := False;
   pnCodeCompletionBack.Visible := False;
   APanel.Visible := True;
 end;
