@@ -1,4 +1,4 @@
-unit DelphiAIDev.Types;
+﻿unit DelphiAIDev.Types;
 
 interface
 
@@ -11,7 +11,7 @@ type
   TC4DWizardMenuContextList = procedure(const MenuContextList: IInterfaceList) of object;
 
   {$SCOPEDENUMS ON}
-  TC4DLanguage = (en, ptBR, es);
+  TC4DLanguage = (en, ptBR, es, ru, auto);
   TC4DExtensionsFiles = (None, PAS, DFM, FMX, DPR, DPK, DPROJ, GROUPPROJ, ZIP, BMP, INI, ALL);
   TC4DExtensionsOfFiles = set of TC4DExtensionsFiles;
   TC4DExtensionsCommon = (rtf, csv, txt);
@@ -69,9 +69,13 @@ begin
     TC4DLanguage.en:
       Result := 'English';
     TC4DLanguage.ptBR:
-      Result := 'Portugu�s Brasil (pt-br)';
+      Result := 'Portugu�s Brasil (pt-br)';
     TC4DLanguage.es:
-      Result := 'Espa�ol';
+      Result := 'Espa�ol';
+    TC4DLanguage.ru:
+      Result := 'Русский';
+    TC4DLanguage.auto:
+      Result := 'Auto (no forcing)';
   else
     Result := GetEnumName(TypeInfo(TC4DLanguage), Integer(Self));
   end;
@@ -79,24 +83,31 @@ end;
 
 function TC4DLanguageHelper.GetLanguageDefinition: string;
 begin
-  Result := 'Responda em portugu�s.' + sLineBreak;
   case Self of
-    TC4DLanguage.en:
-      Result := 'Answer in English.' + sLineBreak;
-    TC4DLanguage.es:
-      Result := 'Answer in Spanish.' + sLineBreak;
+    TC4DLanguage.en:   Result := 'Answer in English.' + sLineBreak;
+    TC4DLanguage.es:   Result := 'Answer in Spanish.' + sLineBreak;
+    TC4DLanguage.ru:   Result := 'Отвечай на русском.' + sLineBreak;
+    TC4DLanguage.ptBR: Result := 'Responda em português.' + sLineBreak;
+  else
+    Result := '';
   end;
 end;
 
 function TC4DLanguageHelper.GetMsgCodeOnly: string;
 begin
-  //Result := 'Fa�a a seguinte a��o sem adicionar nenhum coment�rios';
-  Result := 'Responda a pergunta sem adicionar nenhum coment�rios, retorne apenas o c�digo fonte';
+  //Result := 'Fa�a a seguinte a��o sem adicionar nenhum coment�rios';
+  Result := 'Responda a pergunta sem adicionar nenhum coment�rios, retorne apenas o c�digo fonte';
   case Self of
     TC4DLanguage.en:
-      Result := 'Perform the following action without adding comments:';
+      Result := 'Perform the following action without adding comments, return source code only.';
     TC4DLanguage.es:
-      Result := 'Realice la siguiente acci�n sin agregar comentarios:';
+      Result := 'Realice la siguiente acción sin agregar comentarios, devuelva solo el código fuente.';
+    TC4DLanguage.ru:
+      Result := 'Выполни действие без комментариев, верни только исходный код.';
+    TC4DLanguage.ptBR:
+      Result := 'Responda à pergunta sem adicionar comentários, retorne apenas o código-fonte';
+  else
+    Result := ''; // auto
   end;
 
   Result := Result + sLineBreak;
@@ -104,12 +115,17 @@ end;
 
 function TC4DLanguageHelper.GetMsgSQLOnly: string;
 begin
-  Result := 'Fa�a a seguinte a��o sem adicionar coment�rios e retorne apenas os Comandos SQLs:';
   case Self of
     TC4DLanguage.en:
       Result := 'Perform the following action without adding comments, returning only the SQL commands:';
     TC4DLanguage.es:
-      Result := 'Realice la siguiente acci�n sin agregar comentarios, devolviendo solo comandos SQL:';
+      Result := 'Realice la siguiente acción sin agregar comentarios, devolviendo solo comandos SQL:';
+    TC4DLanguage.ru:
+      Result := 'Выполни действие без комментариев и верни только SQL-команды:';
+    TC4DLanguage.ptBR:
+      Result := 'Faça a seguinte ação sem adicionar comentários e retorne apenas os comandos SQLs:';
+  else
+    Result := '';
   end;
 
   Result := Result + sLineBreak;
@@ -117,12 +133,17 @@ end;
 
 function TC4DLanguageHelper.GetMsgJSONIsDatabaseStructure(ASGBDName: string): string;
 begin
-  Result := 'O seguinte JSON se refere a estrutura SQL de um banco de dados ';
   case Self of
     TC4DLanguage.en:
       Result := 'The following JSON refers to the SQL structure of a database ';
     TC4DLanguage.es:
       Result := 'El siguiente JSON hace referencia a la estructura SQL de una base de datos ';
+    TC4DLanguage.ru:
+      Result := 'Следующий JSON описывает SQL-структуру базы данных ';
+    TC4DLanguage.ptBR:
+      Result := 'O seguinte JSON se refere à estrutura SQL de um banco de dados ';
+  else
+    Result := '';
   end;
 
   Result := Result + ASGBDName + ' ' + sLineBreak;
@@ -130,12 +151,17 @@ end;
 
 function TC4DLanguageHelper.GetMsgJSONInformedAnswerQuestion: string;
 begin
-  Result := 'Com base nesta estrutura responda a seguinte pergunta e retorne o comando SQL correspondente:';
   case Self of
     TC4DLanguage.en:
       Result := 'Based on the structure that was provided, answer the following question and return the corresponding SQL command:';
     TC4DLanguage.es:
-      Result := 'Seg�n la estructura proporcionada, responda la siguiente pregunta y devuelva el comando SQL correspondiente:';
+      Result := 'Según la estructura proporcionada, responda la siguiente pregunta y devuelva el comando SQL correspondiente:';
+    TC4DLanguage.ru:
+      Result := 'Исходя из этой структуры, ответь на вопрос и верни соответствующую SQL-команду:';
+    TC4DLanguage.ptBR:
+      Result := 'Com base nesta estrutura responda a seguinte pergunta e retorne o comando SQL correspondente:';
+  else
+    Result := '';
   end;
 
   Result := Result + sLineBreak;
@@ -143,12 +169,6 @@ end;
 
 function TC4DLanguageHelper.GetMsgCodeCompletionSuggestion: string;
 begin
-  Result := 'Com base no seguinte c�digo delphi, de uma sugest�o ' +
-    'de c�digo para ser adicionado onde esta o coment�rio %s ' + sLineBreak +
-    'Importante: antes do implementation e dentro dos especificadores '+
-    'private, protected, public, published deve-se adicionar apenas declara��es '+
-    'e nunca se deve adicionar implementa��es de c�digos delphi que contenham begin. ' + sLineBreak +
-    'Nas sugest�es, nunca repita um c�digo que j� exista. ';
   case Self of
     TC4DLanguage.en:
       Result := 'Based on the following Delphi code, give a suggestion of code to be added where the comment %s is ' + sLineBreak +
@@ -157,11 +177,19 @@ begin
         'and never add Delphi code implementations that contain begin. '+ sLineBreak +
         'In suggestions, never repeat code that already exists. ';
     TC4DLanguage.es:
-      Result := 'Basado en el siguiente c�digo Delphi, se agregar� una sugerencia de c�digo donde est� el comentario %s ' + sLineBreak +
-        'Importante: antes de la implementaci�n y dentro de los especificadores '+
-        'privados, protegidos, p�blicos y publicados, solo se deben agregar declaraciones '+
-        'y nunca se deben agregar implementaciones de c�digos Delphi que contienen begin. ' + sLineBreak +
-        'En sugerencias, nunca repita c�digo que ya existe. ';
+      Result := 'Basado en el siguiente c�digo Delphi, se agregar� una sugerencia de c�digo donde est� el comentario %s ' + sLineBreak +
+        'Importante: antes de la implementaci�n y dentro de los especificadores '+
+        'privados, protegidos, p�blicos y publicados, solo se deben agregar declaraciones '+
+        'y nunca se deben agregar implementaciones de c�digos Delphi que contienen begin. ' + sLineBreak +
+        'En sugerencias, nunca repita c�digo que ya existe. ';
+    TC4DLanguage.ru:
+      Result :=
+        'На основе следующего кода Delphi предложи фрагмент для вставки на место комментария %s.' + sLineBreak +
+        'Важно: до секции "implementation" и внутри секций "private, protected, public, published" добавляй только объявления, ' +
+        'и никогда не добавляй реализации кода Delphi, содержащие ключевое слово "begin"' + sLineBreak +
+        'В подсказках не повторяй уже существующий код. ';
+    else
+      Result := ''; // auto
   end;
 
   Result := Format(Result, [TConsts.TAG_CODE_COMPLETION]);
