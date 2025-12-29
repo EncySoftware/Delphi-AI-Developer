@@ -23,6 +23,11 @@ type
   TAutoFreeField = (Yes, No);
   TShowMsg = (Yes, No);
   {$SCOPEDENUMS OFF}
+  
+  TAIMessage = record
+    Role, Content: string;
+    constructor Create(const ASender, AContent: string);
+  end;
 
   TC4DLanguageHelper = record helper for TC4DLanguage
     function ToString: string;
@@ -273,6 +278,14 @@ begin
     Exit('FB');
 
   Result := GetEnumName(TypeInfo(TC4DDriverID), Integer(Self));
+end;
+
+{ TAIMessage }
+
+constructor TAIMessage.Create(const ASender, AContent: string);
+begin
+  Role := ASender;
+  Content := AContent;
 end;
 
 end.

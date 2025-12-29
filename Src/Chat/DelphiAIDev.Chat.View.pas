@@ -594,6 +594,7 @@ procedure TDelphiAIDevChatView.btnCleanAllClick(Sender: TObject);
 begin
   mmQuestion.Lines.Clear;
   mmReturn.Lines.Clear;
+  FAI.ClearHistory;
 end;
 
 initialization
