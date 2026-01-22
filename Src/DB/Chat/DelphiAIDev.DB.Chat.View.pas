@@ -26,7 +26,7 @@ uses
   Clipbrd,
   DelphiAIDev.Types,
   DelphiAIDev.Consts,
-  DelphiAIDev.AI.Facade,
+  DelphiAIDev.AI.Request.Chat,
   DelphiAIDev.Settings,
   DelphiAIDev.ModuleCreator,
   DelphiAIDev.DefaultsQuestions.PopupMenu,
@@ -134,7 +134,7 @@ type
     procedure DBGrid1TitleClick(Column: TColumn);
     procedure btnGenerateDatabaseReferenceClick(Sender: TObject);
   private
-    FAI: TDelphiAIDevAIFacade;
+    FAI: TDelphiAIDevAIRequestChat;
     FSettings: TDelphiAIDevSettings;
     FProcessResponse: TDelphiAIDevChatProcessResponse;
     FPopupMenuQuestions: TDelphiAIDevDefaultsQuestionsPopupMenu;
@@ -227,8 +227,8 @@ begin
   AutoSave := True;
   SaveStateNecessary := True;
 
-  FAI := TDelphiAIDevAIFacade.Create;
   FSettings := TDelphiAIDevSettings.GetInstance;
+  FAI := TDelphiAIDevAIRequestChat.Create;
   FProcessResponse := TDelphiAIDevChatProcessResponse.Create(mmReturn);
   FPopupMenuQuestions := TDelphiAIDevDefaultsQuestionsPopupMenu.Create;
   FQuestionOnShow := '';
@@ -681,7 +681,7 @@ begin
     begin
       try
         try
-          FAI.ProcessSend(LQuestion);
+          FAI.SendRequest(LQuestion);
         except
           on E: Exception do
             TThread.Synchronize(nil,

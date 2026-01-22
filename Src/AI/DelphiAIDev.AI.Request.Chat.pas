@@ -6,31 +6,57 @@ uses
   System.SysUtils,
   System.JSON,
   System.Classes,
+  System.Generics.Collections,
   RESTRequest4D,
+  DelphiAIDev.Utils,
   DelphiAIDev.Types,
   DelphiAIDev.Consts,
   DelphiAIDev.Settings,
-  DelphiAIDev.AI.Interfaces;
+  DelphiAIDev.AI.Response;
 
 type
   TDelphiAIDevAIRequestChat = class
+  const
+    HISTORY_DEPTH = 10;
   private
     FSettings: TDelphiAIDevSettings;
-    function GetRequestBody(const AIMessages: array of TAIMessage): string;
+    FResponse: IDelphiAIDevAIResponse;
+    FHistory: TList<TAIMessage>;
+    procedure AddHistory(const ASender, AContent: string);
+    function GetRequestBody(): string;
     function ParseSSEToText(const AContent: string): string;
   public
-    constructor Create(const ASettings: TDelphiAIDevSettings);
-    procedure SendRequest(const AIMessages: array of TAIMessage; AResponse: IDelphiAIDevAIResponse);
+    constructor Create;
+    destructor Destroy; override;
+
+    property Response: IDelphiAIDevAIResponse read FResponse;
+
+    procedure ClearHistory;
+    procedure SendRequest(const AQuestion: string);
   end;
 
 implementation
 
-constructor TDelphiAIDevAIRequestChat.Create(const ASettings: TDelphiAIDevSettings);
+procedure TDelphiAIDevAIRequestChat.AddHistory(const ASender, AContent: string);
 begin
-  FSettings := ASettings;
+  if FHistory.Count > HISTORY_DEPTH then
+    FHistory.Delete(0);
+  FHistory.Add(TAIMessage.Create(ASender, AContent));
 end;
 
-procedure TDelphiAIDevAIRequestChat.SendRequest(const AIMessages: array of TAIMessage; AResponse: IDelphiAIDevAIResponse);
+procedure TDelphiAIDevAIRequestChat.ClearHistory;
+begin
+  FHistory.Clear;
+end;
+
+constructor TDelphiAIDevAIRequestChat.Create();
+begin
+  FHistory := TList<TAIMessage>.Create;
+  FSettings := TDelphiAIDevSettings.GetInstance;
+  FResponse := TDelphiAIDevAIResponse.New;
+end;
+
+procedure TDelphiAIDevAIRequestChat.SendRequest(const AQuestion: string);
 var
   LResponse: IResponse;
   LJsonValueAll, LJsonValueChoices, LJsonValueMessage, LJsonValueText: TJSONValue;
@@ -39,7 +65,10 @@ var
   LItemChoices: Integer;
   LResult: string;
 begin
-  var body := GetRequestBody(AIMessages);
+  var LQuestion := TUtils.AdjustQuestionToJson(AQuestion);
+  AddHistory('user', LQuestion);
+
+  var body := GetRequestBody();
   LResponse := TRequest.New
     .BaseURL(FSettings.BaseUrlAIChat)
     .ContentType(TConsts.APPLICATION_JSON)
@@ -48,11 +77,11 @@ begin
     .AddBody(body)
     .Post;
 
-  AResponse.SetStatusCode(LResponse.StatusCode);
+  FResponse.SetStatusCode(LResponse.StatusCode);
 
   if LResponse.StatusCode <> 200 then
   begin
-    AResponse.SetContentText('Question cannot be answered' + sLineBreak + 'Return: ' + LResponse.Content);
+    FResponse.SetContentText('Question cannot be answered' + sLineBreak + 'Return: ' + LResponse.Content);
     Exit;
   end;
 
@@ -61,10 +90,11 @@ begin
      (LResponse.Content.IndexOf('chat.completion.chunk') >= 0) then
   begin
     LResult := ParseSSEToText(LResponse.Content);
-    if LResult <> '' then
-      AResponse.SetContentText(LResult)
-    else
-      AResponse.SetContentText('The question cannot be answered, empty SSE stream.');
+    if LResult <> '' then begin
+      FResponse.SetContentText(LResult);
+      AddHistory('assistant', TUtils.AdjustQuestionToJson(LResult));
+    end else
+      FResponse.SetContentText('The question cannot be answered, empty SSE stream.');
     Exit;
   end;
 
@@ -73,7 +103,7 @@ begin
   try
     if not (LJsonValueAll is TJSONObject) then
     begin
-      AResponse.SetContentText('The question cannot be answered, return object not found.' + sLineBreak +
+      FResponse.SetContentText('The question cannot be answered, return object not found.' + sLineBreak +
         'Return: ' + LResponse.Content);
       Exit;
     end;
@@ -81,7 +111,7 @@ begin
     LJsonValueChoices := TJSONObject(LJsonValueAll).GetValue('choices');
     if not (LJsonValueChoices is TJSONArray) then
     begin
-      AResponse.SetContentText('The question cannot be answered, choices not found.' + sLineBreak +
+      FResponse.SetContentText('The question cannot be answered, choices not found.' + sLineBreak +
         'Return: ' + LResponse.Content);
       Exit;
     end;
@@ -111,11 +141,18 @@ begin
     LJsonValueAll.Free;
   end;
 
-  AResponse.SetContentText(LResult.Trim);
+  FResponse.SetContentText(LResult.Trim);
+  AddHistory('assistant', TUtils.AdjustQuestionToJson(LResult.Trim));
+end;
+
+destructor TDelphiAIDevAIRequestChat.Destroy;
+begin
+  FHistory.Free;
+  inherited;
 end;
 
 // '{"model": "%s", "messages": [{"role": "user", "content": "%s"}], "stream": false, "max_tokens": 2048}'
-function TDelphiAIDevAIRequestChat.GetRequestBody(const AIMessages: array of TAIMessage): string;
+function TDelphiAIDevAIRequestChat.GetRequestBody(): string;
 begin
   result := '{}';
   var Body := TJSONObject.Create;
@@ -129,7 +166,7 @@ begin
 
     // array of messages
     var jArr := TJSONArray.Create;
-    for var m in AIMessages do begin
+    for var m in FHistory do begin
       var jMsg := TJSONObject.Create;
       jMsg.AddPair('role', m.Role);
       jMsg.AddPair('content', m.Content);

@@ -86,8 +86,10 @@ var
 
 class function TDelphiAIDevSettings.GetInstance: TDelphiAIDevSettings;
 begin
-  if not Assigned(Instance) then
+  if not Assigned(Instance) then begin
     Instance := Self.Create;
+    Instance.LoadData;
+  end;
   Result := Instance;
 end;
 
@@ -104,7 +106,7 @@ begin
   FColorHighlightCodeDelphi := clNone;
   FDefaultPrompt := '';
 
-  FCodeCompletionUse := False;
+  FCodeCompletionUse := True;
   FCodeCompletionSuggestionColorUse := False;
   FCodeCompletionSuggestionColor := TConsts.CODE_COMPLETION_SUGGESTION_COLOR;
   FCodeCompletionShortcutInvoke := TConsts.CODE_COMPLETION_SHORTCUT_INVOKE;
@@ -199,17 +201,6 @@ begin
       if LReg.ValueExists(FIELD_CodeCompletionDefaultPrompt) then
         FCodeCompletionDefaultPrompt := LReg.ReadString(FIELD_CodeCompletionDefaultPrompt);
 
-      //GEMINI
-      if LReg.ValueExists(FIELD_BaseUrlAIChat) then
-        FBaseUrlAIChat := LReg.ReadString(FIELD_BaseUrlAIChat);
-
-      if LReg.ValueExists(FIELD_ModelAIChat) then
-        FModelAIChat := LReg.ReadString(FIELD_ModelAIChat);
-
-      if LReg.ValueExists(FIELD_ApiKeyAIChat) then
-        FApiKeyAIChat := LReg.ReadString(FIELD_ApiKeyAIChat);
-
-      //OPEN AI
       if LReg.ValueExists(FIELD_BaseUrlCodeCmpl) then
         fBaseUrlCodeCmpl := LReg.ReadString(FIELD_BaseUrlCodeCmpl);
 
@@ -218,6 +209,16 @@ begin
 
       if LReg.ValueExists(FIELD_ApiKeyCodeCmpl) then
         fApiKeyCodeCmpl := LReg.ReadString(FIELD_ApiKeyCodeCmpl);
+
+      // AI Chat
+      if LReg.ValueExists(FIELD_BaseUrlAIChat) then
+        FBaseUrlAIChat := LReg.ReadString(FIELD_BaseUrlAIChat);
+
+      if LReg.ValueExists(FIELD_ModelAIChat) then
+        FModelAIChat := LReg.ReadString(FIELD_ModelAIChat);
+
+      if LReg.ValueExists(FIELD_ApiKeyAIChat) then
+        FApiKeyAIChat := LReg.ReadString(FIELD_ApiKeyAIChat);
     except
       Self.LoadDefaults;
     end;
@@ -263,7 +264,7 @@ const
   end;
 begin
   if FBaseUrlCodeCmpl.Trim.IsEmpty then
-        ShowMsgInternal(['Base URL', 'CodeCompletion']);
+    ShowMsgInternal(['Base URL', 'CodeCompletion']);
 
   if FModelCodeCmpl.Trim.IsEmpty then
     ShowMsgInternal(['Model', 'CodeCompletion']);

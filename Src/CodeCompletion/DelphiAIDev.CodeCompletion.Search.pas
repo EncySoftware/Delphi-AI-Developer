@@ -14,7 +14,7 @@ uses
   DelphiAIDev.Utils,
   DelphiAIDev.Utils.OTA,
   DelphiAIDev.CodeCompletion.Vars,
-  DelphiAIDev.AI.Facade;
+  DelphiAIDev.AI.Request.CodeCmpl;
 
 type
   IDelphiAIDevCodeCompletionSearch = interface
@@ -25,11 +25,9 @@ type
   TDelphiAIDevCodeCompletionSearch = class(TInterfacedObject, IDelphiAIDevCodeCompletionSearch)
   private
     FSettings: TDelphiAIDevSettings;
-    FQuestions: TStrings;
-    FAIRequest: TDelphiAIDevAIFacade;
+    FAIRequest: TDelphiAIDevAIRequestCodeCmpl;
     FVars: TDelphiAIDevCodeCompletionVars;
     FIOTAEditPosition: IOTAEditPosition;
-    procedure ProcessQuestions(const AContext: IOTAKeyContext);
     procedure ProcessResponse;
   protected
     procedure Process(const AContext: IOTAKeyContext);
@@ -49,53 +47,44 @@ end;
 constructor TDelphiAIDevCodeCompletionSearch.Create;
 begin
   FSettings := TDelphiAIDevSettings.GetInstance;
-  FAIRequest := TDelphiAIDevAIFacade.Create;
-  FQuestions := TStringList.Create;
   FVars := TDelphiAIDevCodeCompletionVars.GetInstance;
+  FAIRequest := TDelphiAIDevAIRequestCodeCmpl.Create;
 end;
 
 destructor TDelphiAIDevCodeCompletionSearch.Destroy;
 begin
-  FQuestions.Free;
   FAIRequest.Free;
   inherited;
 end;
 
 procedure TDelphiAIDevCodeCompletionSearch.Process(const AContext: IOTAKeyContext);
+const
+  CODE_SIZE_BEFORE = 25000;
+  CODE_SIZE_AFTER = 5000;
+var
+  LIOTAEditPosition: IOTAEditPosition;
+  LPrefix, LSuffix, LResultText: string;
+  LRow, LColumn: Integer;
 begin
   FSettings.ValidateFillingAICodeComplOptions(TShowMsg.No);
 
   Screen.Cursor := crHourGlass;
   try
-    Self.ProcessQuestions(AContext);
+    TUtilsOTA.GetTextAroundCursor(LPrefix, LSuffix);
+    if LPrefix = '' then Exit;
 
-    try
-      FAIRequest.ProcessSend(FQuestions.Text);
-    except
-      Abort;
-    end;
+    if LPrefix.Length > CODE_SIZE_BEFORE then
+      LPrefix := LPrefix.Substring(LPrefix.Length - CODE_SIZE_BEFORE);
 
+    if LSuffix.Length > CODE_SIZE_AFTER then
+      LSuffix := LSuffix.Substring(0, CODE_SIZE_AFTER);
+
+    FAIRequest.SendRequest(LPrefix, LSuffix);
+
+    FIOTAEditPosition := AContext.EditBuffer.EditPosition;
     Self.ProcessResponse;
   finally
     Screen.Cursor := crDefault;
-  end;
-end;
-
-procedure TDelphiAIDevCodeCompletionSearch.ProcessQuestions(const AContext: IOTAKeyContext);
-begin
-  FQuestions.Clear;
-  FQuestions.Add(FSettings.LanguageQuestions.GetLanguageDefinition);
-  FQuestions.Add(FSettings.LanguageQuestions.GetMsgCodeCompletionSuggestion);
-  FQuestions.Add(FSettings.LanguageQuestions.GetMsgCodeOnly);
-  if not FSettings.CodeCompletionDefaultPrompt.Trim.IsEmpty then
-    FQuestions.Add(FSettings.CodeCompletionDefaultPrompt);
-
-  FIOTAEditPosition := AContext.EditBuffer.EditPosition;
-  FIOTAEditPosition.InsertText(TConsts.TAG_CODE_COMPLETION);
-  try
-    FQuestions.Add(TUtilsOTA.GetSelectedBlockOrAllCodeUnit.Trim);
-  finally
-    FIOTAEditPosition.BackspaceDelete(TConsts.TAG_CODE_COMPLETION.Length);
   end;
 end;
 

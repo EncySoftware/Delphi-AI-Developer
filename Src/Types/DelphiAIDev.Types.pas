@@ -37,6 +37,7 @@ type
     function GetMsgJSONIsDatabaseStructure(ASGBDName: string): string;
     function GetMsgJSONInformedAnswerQuestion: string;
     function GetMsgCodeCompletionSuggestion: string;
+    function GetMsgModuleName: string;
   end;
 
   TC4DExtensionsFilesHelper = record helper for TC4DExtensionsFiles
@@ -152,6 +153,18 @@ begin
   end;
 
   Result := Result + ASGBDName + ' ' + sLineBreak;
+end;
+
+function TC4DLanguageHelper.GetMsgModuleName: string;
+begin
+  case Self of
+    TC4DLanguage.en: Result := 'Module name: ';
+    TC4DLanguage.es: Result := 'Nombre del módulo: ';
+    TC4DLanguage.ru: Result := 'Название модуля: ';
+    TC4DLanguage.ptBR: Result := 'Nome do módulo: ';
+  else
+    Result := '';
+  end;
 end;
 
 function TC4DLanguageHelper.GetMsgJSONInformedAnswerQuestion: string;

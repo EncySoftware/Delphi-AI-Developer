@@ -26,7 +26,7 @@ uses
   Clipbrd,
   DelphiAIDev.Types,
   DelphiAIDev.Consts,
-  DelphiAIDev.AI.Facade,
+  DelphiAIDev.AI.Request.Chat,
   DelphiAIDev.Settings,
   DelphiAIDev.ModuleCreator,
   DelphiAIDev.DefaultsQuestions.PopupMenu,
@@ -94,7 +94,7 @@ type
     procedure Clear1Click(Sender: TObject);
     procedure btnCleanAllClick(Sender: TObject);
   private
-    FAI: TDelphiAIDevAIFacade;
+    FAI: TDelphiAIDevAIRequestChat;
     FSettings: TDelphiAIDevSettings;
     FProcessResponse: TDelphiAIDevChatProcessResponse;
     FPopupMenuQuestions: TDelphiAIDevDefaultsQuestionsPopupMenu;
@@ -110,6 +110,7 @@ type
     procedure Last;
     function GetSelectedTextOrAllFromReturn: string;
     function GetSelectedTextOrAllOrAbort: string;
+    function GetRequestMessage: string;
     procedure WaitingFormOFF;
     procedure WaitingFormON;
     procedure ConfScreenOnShow;
@@ -178,7 +179,7 @@ begin
   AutoSave := True;
   SaveStateNecessary := True;
 
-  FAI := TDelphiAIDevAIFacade.Create;
+  FAI := TDelphiAIDevAIRequestChat.Create;
   FSettings := TDelphiAIDevSettings.GetInstance;
   FProcessResponse := TDelphiAIDevChatProcessResponse.Create(mmReturn);
   FPopupMenuQuestions := TDelphiAIDevDefaultsQuestionsPopupMenu.Create;
@@ -410,35 +411,25 @@ end;
 procedure TDelphiAIDevChatView.ProcessSend;
 var
   LTask: ITask;
-  LQuestion: string;
 begin
   if mmQuestion.Lines.Text.Trim.IsEmpty then
     TUtils.ShowMsgAndAbort('No questions have been added', mmQuestion);
 
   FSettings.ValidateFillingAIChatOptions;
 
-  mmReturn.Lines.Clear;
-  Self.WaitingFormON;
-
-  LQuestion := FSettings.LanguageQuestions.GetLanguageDefinition;
-
-  if btnUseCurrentUnitCode.ImageIndex = UseCurrentUnitCode_ImageIndex_ON then
-    LQuestion := TUtilsOTA.GetSelectedBlockOrAllCodeUnit.Trim + sLineBreak;
-
-  if btnCodeOnly.ImageIndex = CodeOnly_ImageIndex_ON then
-    LQuestion := LQuestion + FSettings.LanguageQuestions.GetMsgCodeOnly + sLineBreak;
-
-  if not FSettings.DefaultPrompt.Trim.IsEmpty then
-    LQuestion := LQuestion + FSettings.DefaultPrompt + sLineBreak;
-
-  LQuestion := LQuestion + mmQuestion.Lines.Text;
-
   LTask := TTask.Create(
     procedure
     begin
+      TThread.Synchronize(nil,
+          procedure
+          begin
+            Self.WaitingFormOn;
+            btnSend.Enabled := false;
+          end);
       try
         try
-          FAI.ProcessSend(LQuestion);
+          var mes := GetRequestMessage;
+          FAI.SendRequest(mes);
         except
           on E: Exception do
             TThread.Synchronize(nil,
@@ -467,6 +458,7 @@ begin
           procedure
           begin
             Self.WaitingFormOFF;
+            btnSend.Enabled := true;
           end);
       end;
     end);
@@ -510,6 +502,54 @@ end;
 procedure TDelphiAIDevChatView.Last;
 begin
   SendMessage(mmReturn.Handle, WM_VSCROLL, SB_BOTTOM, 0);
+end;
+
+function TDelphiAIDevChatView.GetRequestMessage: string;
+const
+  MAX_CODE_LENGTH = 20000;
+begin
+  // user question
+  Result := mmQuestion.Lines.Text + sLineBreak;
+
+  // language definition
+  Result := Result + FSettings.LanguageQuestions.GetLanguageDefinition + sLineBreak;
+
+  // answer code only
+  if btnCodeOnly.ImageIndex = CodeOnly_ImageIndex_ON then
+    Result := Result + FSettings.LanguageQuestions.GetMsgCodeOnly + sLineBreak;
+
+  // add default promt
+  if not FSettings.DefaultPrompt.Trim.IsEmpty then
+    Result := Result + FSettings.DefaultPrompt + sLineBreak;
+
+  // add code text
+  if btnUseCurrentUnitCode.ImageIndex = UseCurrentUnitCode_ImageIndex_ON then begin
+    // current module name
+    var fileName := TUtilsOTA.GetCurrentModuleFileName;
+    if not fileName.IsEmpty then
+      Result := Result + FSettings.LanguageQuestions.GetMsgModuleName + ExtractFileName(fileName) + sLineBreak;  
+    
+    // check selected code
+    var code := TUtilsOTA.GetSelectedTextBlock;
+    if code.Length > MAX_CODE_LENGTH then
+      code := code.Substring(0, MAX_CODE_LENGTH);
+
+    // check code around cursor
+    if code.Trim.IsEmpty then begin
+      var codeLength := Round(MAX_CODE_LENGTH / 2);
+      var before, after: string;
+      TUtilsOTA.GetTextAroundCursor(before, after);
+      if before.Length > codeLength then
+        before := before.Substring(before.Length - codeLength);
+      if after.Length > codeLength then
+        after := after.Substring(0, codeLength);
+      code := before + after; 
+    end;
+
+    // add code block
+    if not code.Trim.IsEmpty then
+      Result := Result + '```' + code + '```';
+  end;
 end;
 
 function TDelphiAIDevChatView.GetSelectedTextOrAllFromReturn: string;
@@ -566,6 +606,7 @@ end;
 procedure TDelphiAIDevChatView.Clear1Click(Sender: TObject);
 begin
   mmReturn.Lines.Clear;
+  FAI.ClearHistory;
 end;
 
 procedure TDelphiAIDevChatView.btnMoreActionsClick(Sender: TObject);

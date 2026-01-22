@@ -4,10 +4,18 @@ interface
 
 uses
   System.SysUtils,
-  System.Classes,
-  DelphiAIDev.AI.Interfaces;
+  System.Classes;
 
 type
+  IDelphiAIDevAIResponse = interface
+    ['{F9E7734A-33FA-4448-9F5D-A3680FFFFFB9}']
+    function Clear: IDelphiAIDevAIResponse;
+    function SetStatusCode(const Value: Integer): IDelphiAIDevAIResponse;
+    function GetStatusCode: Integer;
+    function SetContentText(const Value: string): IDelphiAIDevAIResponse;
+    function GetContent: TStrings;
+  end;
+
   TDelphiAIDevAIResponse = class(TInterfacedObject, IDelphiAIDevAIResponse)
   private
     FStatusCode: Integer;

@@ -57,10 +57,8 @@ contains
   DelphiAIDev.Test in '..\Src\Test\DelphiAIDev.Test.pas',
   DelphiAIDev.Settings.View in '..\Src\Settings\DelphiAIDev.Settings.View.pas' {DelphiAIDevSettingsView},
   DelphiAIDev.Settings in '..\Src\Settings\DelphiAIDev.Settings.pas',
-  DelphiAIDev.AI.Facade in '..\Src\AI\DelphiAIDev.AI.Facade.pas',
   DelphiAIDev.Chat.View in '..\Src\Chat\DelphiAIDev.Chat.View.pas' {DelphiAIDevChatView},
   DelphiAIDev.Chat.ProcessResponse in '..\Src\Chat\DelphiAIDev.Chat.ProcessResponse.pas',
-  DelphiAIDev.AI.Interfaces in '..\Src\AI\DelphiAIDev.AI.Interfaces.pas',
   DelphiAIDev.Interfaces in '..\Src\Interfaces\DelphiAIDev.Interfaces.pas',
   DelphiAIDev.ModuleCreator.OTA in '..\Src\ModuleCreator\DelphiAIDev.ModuleCreator.OTA.pas',
   DelphiAIDev.ModuleCreator in '..\Src\ModuleCreator\DelphiAIDev.ModuleCreator.pas',
@@ -111,6 +109,7 @@ contains
   DelphiAIDev.Test.Client in '..\Src\Test\DelphiAIDev.Test.Client.pas',
   DelphiAIDev.CodeCompletion.KeyTab in '..\Src\CodeCompletion\DelphiAIDev.CodeCompletion.KeyTab.pas',
   DelphiAIDev.AI.Response in '..\Src\AI\DelphiAIDev.AI.Response.pas',
-  DelphiAIDev.AI.Request.Chat in '..\Src\AI\DelphiAIDev.AI.Request.Chat.pas';
+  DelphiAIDev.AI.Request.Chat in '..\Src\AI\DelphiAIDev.AI.Request.Chat.pas',
+  DelphiAIDev.AI.Request.CodeCmpl in '..\Src\AI\DelphiAIDev.AI.Request.CodeCmpl.pas';
 
 end.

@@ -149,7 +149,7 @@ begin
     Exit;
 
   if AEditView.Block.IsValid then
-    Result := TUtilsOTA.GetBlockTextSelect
+    Result := TUtilsOTA.GetSelectedTextBlock
   else
   begin
     CnOtaGetCurrLineText(LLineText, LLineNo, LCharIndex);

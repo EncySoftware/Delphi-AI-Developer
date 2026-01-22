@@ -66,8 +66,9 @@ type
     class function GetINTAServices: INTAServices;
     class function GetIOTAModuleServices: IOTAModuleServices;
     class function GetIOTAEditorServices: IOTAEditorServices;
-    class function GetBlockTextSelect: string;
+    class function GetSelectedTextBlock: string;
     class function GetSelectedBlockOrAllCodeUnit: string;
+    class procedure GetTextAroundCursor(var SBefore, SAfter: string);
     class function GetCurrentModule: IOTAModule;
     class function GetCurrentModuleFileName: string;
     class function GetModule(const AFileName: string): IOTAModule;
@@ -377,7 +378,7 @@ begin
   LIOTAEditView.Paint;
 end;
 
-class function TUtilsOTA.GetBlockTextSelect: string;
+class function TUtilsOTA.GetSelectedTextBlock: string;
 var
   LIOTAEditorServices: IOTAEditorServices;
 begin
@@ -389,9 +390,70 @@ end;
 
 class function TUtilsOTA.GetSelectedBlockOrAllCodeUnit: string;
 begin
-  Result := TUtilsOTA.GetBlockTextSelect;
+  Result := TUtilsOTA.GetSelectedTextBlock;
   if Result.Trim.IsEmpty then
     Result := TUtilsOTA.EditorAsString(TUtilsOTA.GetCurrentModule);
+end;
+
+class procedure TUtilsOTA.GetTextAroundCursor(var SBefore, SAfter: string);
+var
+  Lines: TStringList;
+  LinePos, LColPos, i: Integer;
+  CurrentLine: string;
+  sbBefore, sbAfter: TStringBuilder;
+begin
+  SBefore := '';
+  SAfter := '';
+  Lines := TStringList.Create;
+  try
+    // get cursor position and all code unit
+    TUtilsOTA.GetCursorPosition(LinePos, LColPos);
+    Lines.Text := TUtilsOTA.EditorAsString(TUtilsOTA.GetCurrentModule);
+    if (LinePos < 1) or (LinePos > Lines.Count) then exit;
+
+    sbBefore := TStringBuilder.Create;
+    sbAfter := TStringBuilder.Create;
+    try
+      CurrentLine := Lines[LinePos - 1];
+      if LColPos > CurrentLine.Length then
+        LColPos := CurrentLine.Length + 1;
+
+      // all lines before cursor position
+      for i := 0 to LinePos - 2 do begin
+        if sbBefore.Length > 0 then
+          sbBefore.Append(sLineBreak);
+        sbBefore.Append(Lines[i]);
+      end;
+
+      // current line before cursor position
+      if LColPos > 1 then begin
+        if sbBefore.Length > 0 then
+          sbBefore.Append(sLineBreak);
+        sbBefore.Append(CurrentLine.Substring(0, LColPos - 1));
+      end;
+
+      // current line after cursor position
+      if LColPos > 0 then
+       sbAfter.Append(CurrentLine.Substring(LColPos - 1));
+
+      // all lines after cursor position
+      for i := LinePos to Lines.Count - 1 do begin
+        if sbAfter.Length > 0 then
+          sbAfter.Append(sLineBreak);
+        sbAfter.Append(Lines[i]);
+      end;
+
+      SBefore := sbBefore.ToString;
+      SAfter := sbAfter.ToString;
+
+    finally
+      sbBefore.Free;
+      sbAfter.Free;
+    end;
+
+  finally
+    Lines.Free;
+  end;
 end;
 
 class procedure TUtilsOTA.OpenFilePathInIDE(AFilePath: string);
