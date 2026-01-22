@@ -180,9 +180,6 @@ begin
   begin
     Canvas.Brush.Style := bsClear;
     Canvas.Font.Color := $777777;
-    if TDelphiAIDevSettings.GetInstance.CodeCompletionSuggestionColorUse then
-      Canvas.Font.Color := TDelphiAIDevSettings.GetInstance.CodeCompletionSuggestionColor;
-
     try
       LLineText := LVars.Contents[LineNumber - LVars.LineIni];
       Canvas.TextOut(TextRect.Left, TextRect.Top, LLineText.TrimRight);

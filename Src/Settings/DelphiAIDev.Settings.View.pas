@@ -58,14 +58,10 @@ type
     GroupBox3: TGroupBox;
     Panel2: TPanel;
     ckCodeCompletionUse: TCheckBox;
-    ColorBoxCodeCompletionSuggestionColor: TColorBox;
-    ckCodeCompletionSuggestionColorUse: TCheckBox;
     Label16: TLabel;
     gboxData: TGroupBox;
     btnOpenDataFolder: TButton;
     edtCodeCompletionShortcutInvoke: TEdit;
-    Label18: TLabel;
-    mmCodeCompletionDefaultPrompt: TMemo;
     GroupBox1: TGroupBox;
     Panel1: TPanel;
     Label1: TLabel;
@@ -95,7 +91,6 @@ type
     procedure btnIAsOnlineClick(Sender: TObject);
     procedure btnCodeCompletionClick(Sender: TObject);
     procedure btnOpenDataFolderClick(Sender: TObject);
-    procedure ckCodeCompletionSuggestionColorUseClick(Sender: TObject);
     procedure btnApiKeyCodeComplClick(Sender: TObject);
   private
     FSettings: TDelphiAIDevSettings;
@@ -107,7 +102,6 @@ type
     procedure ShowPanel(const AButton: TButton; const APanel: TPanel);
     procedure PanelsSetParent;
     procedure ValidateCodeCompletionShortcutInvoke;
-    procedure ConfigFieldsCodeCompletionSuggestionColor;
   public
 
   end;
@@ -227,16 +221,6 @@ begin
     edtCodeCompletionShortcutInvoke.Text := TConsts.CODE_COMPLETION_SHORTCUT_INVOKE;
 end;
 
-procedure TDelphiAIDevSettingsView.ckCodeCompletionSuggestionColorUseClick(Sender: TObject);
-begin
-  Self.ConfigFieldsCodeCompletionSuggestionColor;
-end;
-
-procedure TDelphiAIDevSettingsView.ConfigFieldsCodeCompletionSuggestionColor;
-begin
-  ColorBoxCodeCompletionSuggestionColor.Enabled := ckCodeCompletionSuggestionColorUse.Checked;
-end;
-
 procedure TDelphiAIDevSettingsView.ckColorHighlightCodeDelphiUseClick(Sender: TObject);
 begin
   Self.ConfigFieldsColorHighlightDelphi;
@@ -257,10 +241,7 @@ begin
   mmDefaultPrompt.Lines.Text := FSettings.DefaultPrompt;
 
   ckCodeCompletionUse.Checked := FSettings.CodeCompletionUse;
-  ckCodeCompletionSuggestionColorUse.Checked := FSettings.CodeCompletionSuggestionColorUse;
-  ColorBoxCodeCompletionSuggestionColor.Selected := FSettings.CodeCompletionSuggestionColor;
   edtCodeCompletionShortcutInvoke.Text := FSettings.CodeCompletionShortcutInvoke;
-  mmCodeCompletionDefaultPrompt.Lines.Text := FSettings.CodeCompletionDefaultPrompt;
 
   edtBaseUrlAIChat.Text := FSettings.BaseUrlAIChat;
   cBoxModelAIChat.ItemIndex := cBoxModelAIChat.Items.IndexOf(FSettings.ModelAIChat);
@@ -284,10 +265,7 @@ begin
   FSettings.DefaultPrompt := mmDefaultPrompt.Lines.Text;
 
   FSettings.CodeCompletionUse := ckCodeCompletionUse.Checked;
-  FSettings.CodeCompletionSuggestionColorUse := ckCodeCompletionSuggestionColorUse.Checked;
-  FSettings.CodeCompletionSuggestionColor := ColorBoxCodeCompletionSuggestionColor.Selected;
   FSettings.CodeCompletionShortcutInvoke := edtCodeCompletionShortcutInvoke.Text;
-  FSettings.CodeCompletionDefaultPrompt := mmCodeCompletionDefaultPrompt.Lines.Text;
 
   FSettings.BaseUrlAIChat := edtBaseUrlAIChat.Text;
   FSettings.ModelAIChat := cBoxModelAIChat.Text;

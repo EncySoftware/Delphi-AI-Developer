@@ -137,12 +137,10 @@
             <Form>DelphiAIDevSettingsView</Form>
         </DCCReference>
         <DCCReference Include="..\Src\Settings\DelphiAIDev.Settings.pas"/>
-        <DCCReference Include="..\Src\AI\DelphiAIDev.AI.Facade.pas"/>
         <DCCReference Include="..\Src\Chat\DelphiAIDev.Chat.View.pas">
             <Form>DelphiAIDevChatView</Form>
         </DCCReference>
         <DCCReference Include="..\Src\Chat\DelphiAIDev.Chat.ProcessResponse.pas"/>
-        <DCCReference Include="..\Src\AI\DelphiAIDev.AI.Interfaces.pas"/>
         <DCCReference Include="..\Src\Interfaces\DelphiAIDev.Interfaces.pas"/>
         <DCCReference Include="..\Src\ModuleCreator\DelphiAIDev.ModuleCreator.OTA.pas"/>
         <DCCReference Include="..\Src\ModuleCreator\DelphiAIDev.ModuleCreator.pas"/>
@@ -210,6 +208,7 @@
         <DCCReference Include="..\Src\CodeCompletion\DelphiAIDev.CodeCompletion.KeyTab.pas"/>
         <DCCReference Include="..\Src\AI\DelphiAIDev.AI.Response.pas"/>
         <DCCReference Include="..\Src\AI\DelphiAIDev.AI.Request.Chat.pas"/>
+        <DCCReference Include="..\Src\AI\DelphiAIDev.AI.Request.CodeCmpl.pas"/>
         <RcItem Include="Img\c4d_Logo.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>c4d_Logo</ResourceId>

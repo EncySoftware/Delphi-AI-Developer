@@ -201,7 +201,7 @@ object DelphiAIDevSettingsView: TDelphiAIDevSettingsView
     Top = 33
     Width = 667
     Height = 552
-    ActivePage = TabSheet2
+    ActivePage = TabSheet4
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Preferences'
@@ -502,17 +502,10 @@ object DelphiAIDevSettingsView: TDelphiAIDevSettingsView
             TabOrder = 0
             object Label16: TLabel
               Left = 16
-              Top = 85
+              Top = 35
               Width = 231
               Height = 13
               Caption = 'Shortcut for invoke (Delphi IDE restart required)'
-            end
-            object Label18: TLabel
-              Left = 16
-              Top = 134
-              Width = 72
-              Height = 13
-              Caption = 'Default Prompt'
             end
             object ckCodeCompletionUse: TCheckBox
               Left = 16
@@ -523,37 +516,12 @@ object DelphiAIDevSettingsView: TDelphiAIDevSettingsView
               Caption = 'Use Code Completion'
               TabOrder = 0
             end
-            object ColorBoxCodeCompletionSuggestionColor: TColorBox
-              Left = 16
-              Top = 49
-              Width = 333
-              Height = 22
-              TabOrder = 1
-            end
-            object ckCodeCompletionSuggestionColorUse: TCheckBox
-              Left = 16
-              Top = 28
-              Width = 131
-              Height = 17
-              Cursor = crHandPoint
-              Caption = 'Suggestion Code Color'
-              TabOrder = 2
-              OnClick = ckCodeCompletionSuggestionColorUseClick
-            end
             object edtCodeCompletionShortcutInvoke: TEdit
               Left = 16
-              Top = 102
+              Top = 52
               Width = 333
               Height = 21
-              TabOrder = 3
-            end
-            object mmCodeCompletionDefaultPrompt: TMemo
-              Left = 16
-              Top = 151
-              Width = 617
-              Height = 201
-              ScrollBars = ssVertical
-              TabOrder = 4
+              TabOrder = 1
             end
           end
         end
