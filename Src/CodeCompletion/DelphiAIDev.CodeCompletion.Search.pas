@@ -29,6 +29,8 @@ type
     FVars: TDelphiAIDevCodeCompletionVars;
     FIOTAEditPosition: IOTAEditPosition;
     procedure ProcessResponse;
+    procedure FormatPrefixCode(var APrefix: string; isImplSection: Boolean);
+    procedure FormatSuffixCode(var ASuffix: string);
   protected
     procedure Process(const AContext: IOTAKeyContext);
   public
@@ -57,27 +59,68 @@ begin
   inherited;
 end;
 
-procedure TDelphiAIDevCodeCompletionSearch.Process(const AContext: IOTAKeyContext);
+procedure TDelphiAIDevCodeCompletionSearch.FormatPrefixCode(var APrefix: string;
+  isImplSection: Boolean);
 const
-  CODE_SIZE_BEFORE = 25000;
-  CODE_SIZE_AFTER = 5000;
+  MAX_CODE_SIZE = 8000;
+begin
+  // check implementation section
+  var ind := 0;
+  if isImplSection then begin
+    // check end; string
+    ind := APrefix.LastIndexOf('end;');
+    if ind > 0 then
+      APrefix := APrefix.Substring(ind + 4).TrimLeft;
+
+    // check type string
+    ind := APrefix.LastIndexOf('type');
+    if ind > 0 then
+      APrefix := APrefix.Substring(ind);
+  end else begin
+    // check procedure string
+    ind := APrefix.LastIndexOf('procedure');
+    if ind > 0 then
+      APrefix := APrefix.Substring(ind);
+
+    // check function string
+    ind := APrefix.LastIndexOf('function');
+    if ind > 0 then
+      APrefix := APrefix.Substring(ind);
+  end;
+
+  // check max length
+  if APrefix.Length > MAX_CODE_SIZE then
+    APrefix := APrefix.Substring(APrefix.Length - MAX_CODE_SIZE);
+end;
+
+procedure TDelphiAIDevCodeCompletionSearch.FormatSuffixCode(var ASuffix: string);
+const
+  MAX_CODE_SIZE = 1000;
+begin
+  // first end
+  var ind := ASuffix.IndexOf('end;');
+  if ind > 0 then
+    ASuffix := ASuffix.Substring(0, ind + 4);
+
+  // max length
+  if ASuffix.Length > MAX_CODE_SIZE then
+    ASuffix := ASuffix.Substring(0, MAX_CODE_SIZE);
+end;
+
+procedure TDelphiAIDevCodeCompletionSearch.Process(const AContext: IOTAKeyContext);
 var
-  LIOTAEditPosition: IOTAEditPosition;
-  LPrefix, LSuffix, LResultText: string;
-  LRow, LColumn: Integer;
+  LPrefix, LSuffix: string;
 begin
   FSettings.ValidateFillingAICodeComplOptions(TShowMsg.No);
 
   Screen.Cursor := crHourGlass;
   try
     TUtilsOTA.GetTextAroundCursor(LPrefix, LSuffix);
-    if LPrefix = '' then Exit;
+    if LPrefix.Trim = '' then Exit;
 
-    if LPrefix.Length > CODE_SIZE_BEFORE then
-      LPrefix := LPrefix.Substring(LPrefix.Length - CODE_SIZE_BEFORE);
-
-    if LSuffix.Length > CODE_SIZE_AFTER then
-      LSuffix := LSuffix.Substring(0, CODE_SIZE_AFTER);
+    var isImplSection := LSuffix.Contains('implementation');
+    FormatPrefixCode(LPrefix, isImplSection);
+    FormatSuffixCode(LSuffix);
 
     FAIRequest.SendRequest(LPrefix, LSuffix);
 
