@@ -110,6 +110,7 @@ contains
   DelphiAIDev.CodeCompletion.KeyTab in '..\Src\CodeCompletion\DelphiAIDev.CodeCompletion.KeyTab.pas',
   DelphiAIDev.AI.Response in '..\Src\AI\DelphiAIDev.AI.Response.pas',
   DelphiAIDev.AI.Request.Chat in '..\Src\AI\DelphiAIDev.AI.Request.Chat.pas',
-  DelphiAIDev.AI.Request.CodeCmpl in '..\Src\AI\DelphiAIDev.AI.Request.CodeCmpl.pas';
+  DelphiAIDev.AI.Request.CodeCmpl in '..\Src\AI\DelphiAIDev.AI.Request.CodeCmpl.pas',
+  DelphiAIDev.Utils.GitHelper in '..\Src\Utils\DelphiAIDev.Utils.GitHelper.pas';
 
 end.

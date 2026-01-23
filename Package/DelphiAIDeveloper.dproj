@@ -241,6 +241,7 @@
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>c4d_database_execute</ResourceId>
         </RcItem>
+        <DCCReference Include="..\Src\Utils\DelphiAIDev.Utils.GitHelper.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

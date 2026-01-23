@@ -115,6 +115,12 @@ begin
 
   Screen.Cursor := crHourGlass;
   try
+    var filePath := TUtilsOTA.GetCurrentModuleFileName;
+    if not FileExists(filePath) then Exit;
+
+    var ext := ExtractFileExt(filePath);
+    if (ext <> '.pas') and (ext <> '.dpr') and (ext <> '.dpk') then Exit;
+
     TUtilsOTA.GetTextAroundCursor(LPrefix, LSuffix);
     if LPrefix.Trim = '' then Exit;
 
@@ -122,7 +128,7 @@ begin
     FormatPrefixCode(LPrefix, isImplSection);
     FormatSuffixCode(LSuffix);
 
-    FAIRequest.SendRequest(LPrefix, LSuffix);
+    FAIRequest.SendRequest(LPrefix, LSuffix, filePath);
 
     FIOTAEditPosition := AContext.EditBuffer.EditPosition;
     Self.ProcessResponse;

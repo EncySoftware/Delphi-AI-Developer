@@ -6,8 +6,10 @@ uses
   System.SysUtils,
   System.JSON,
   System.Classes,
+  Clipbrd,
   RESTRequest4D,
   DelphiAIDev.Utils,
+  DelphiAIDev.Utils.GitHelper,
   DelphiAIDev.Types,
   DelphiAIDev.Consts,
   DelphiAIDev.Settings,
@@ -18,13 +20,13 @@ type
   private
     FSettings: TDelphiAIDevSettings;
     FResponse: IDelphiAIDevAIResponse;
-    function GetRequestBody(const APrefix, ASuffix: string): string;
+    function GetRequestBody(const APrefix, ASuffix, AFilePath: string): string;
     function GetResponseText(const AJsonResponse: string): string;
   public
     constructor Create;
 
     property Response: IDelphiAIDevAIResponse read FResponse;
-    procedure SendRequest(const APrefix, ASuffix: string);
+    procedure SendRequest(const APrefix, ASuffix, AFilePath : string);
   end;
 
 implementation
@@ -35,14 +37,14 @@ begin
   FResponse := TDelphiAIDevAIResponse.New;
 end;
 
-procedure TDelphiAIDevAIRequestCodeCmpl.SendRequest(const APrefix, ASuffix: string);
+procedure TDelphiAIDevAIRequestCodeCmpl.SendRequest(const APrefix, ASuffix, AFilePath: string);
 var
   LResponse: IResponse;
   LResult, LPrefix, LSuffix, RBody: string;
 begin
   LPrefix := TUtils.AdjustQuestionToJson(APrefix);
   LSuffix := TUtils.AdjustQuestionToJson(ASuffix);
-  RBody := GetRequestBody(LPrefix, LSuffix);
+  RBody := GetRequestBody(LPrefix, LSuffix, AFilePath);
 
   LResponse := TRequest.New
     .BaseURL(FSettings.BaseUrlCodeCmpl)
@@ -65,21 +67,43 @@ begin
 end;
 
 // {"language": "pascal", "segments": {"prefix": "code before cursor","suffix": "code after cursor"}}
-function TDelphiAIDevAIRequestCodeCmpl.GetRequestBody(const APrefix, ASuffix: string): string;
+function TDelphiAIDevAIRequestCodeCmpl.GetRequestBody(const APrefix, ASuffix, AFilePath: string): string;
 begin
   result := '{}';
   var JBody := TJSONObject.Create;
   try
+    // get git repository info
+    var GitInfo := TGitHelper.GetGitInfo(AFilePath);
+
     // set language
-    JBody.AddPair('language', '');
+    JBody.AddPair('language', 'delphi');
 
     // add prefix and suffix to the segments object
     var SegmentsObj := TJSONObject.Create;
     SegmentsObj.AddPair('prefix', APrefix);
     SegmentsObj.AddPair('suffix', ASuffix);
 
-    // add segments to the main object
+    // add file info to the segments object
+    var RelativeFilePath := GitInfo.RelativeFilePath;
+    if RelativeFilePath.IsEmpty then
+      RelativeFilePath := ExtractFileName(AFilePath);
+    SegmentsObj.AddPair('filepath', RelativeFilePath);
+
+    // add git url info to the segments object
+    if not GitInfo.RemoteUrl.isEmpty then
+      SegmentsObj.AddPair('git_url', GitInfo.RemoteUrl);
+
+    // add segments object
     JBody.AddPair('segments', SegmentsObj);
+
+    // clipboard data info
+    var ClipboardText := Clipboard.AsText;
+    if not ClipboardText.IsEmpty then
+      JBody.AddPair('clipboard', ClipboardText);
+
+    // user info
+    if not GitInfo.UserName.IsEmpty then
+      JBody.AddPair('user', GitInfo.UserName);
 
     result := JBody.ToJSON;
   finally
