@@ -20,13 +20,13 @@ type
   private
     FSettings: TDelphiAIDevSettings;
     FResponse: IDelphiAIDevAIResponse;
-    function GetRequestBody(const APrefix, ASuffix, AFilePath: string): string;
+    function GetRequestBody(const APrefix, ASuffix, ADeclaration, AFilePath: string): string;
     function GetResponseText(const AJsonResponse: string): string;
   public
     constructor Create;
 
     property Response: IDelphiAIDevAIResponse read FResponse;
-    procedure SendRequest(const APrefix, ASuffix, AFilePath : string);
+    procedure SendRequest(const APrefix, ASuffix, ADeclaration, AFilePath : string);
   end;
 
 implementation
@@ -37,15 +37,14 @@ begin
   FResponse := TDelphiAIDevAIResponse.New;
 end;
 
-procedure TDelphiAIDevAIRequestCodeCmpl.SendRequest(const APrefix, ASuffix, AFilePath: string);
+procedure TDelphiAIDevAIRequestCodeCmpl.SendRequest(const APrefix, ASuffix, ADeclaration, AFilePath: string);
 var
   LResponse: IResponse;
   LResult, LPrefix, LSuffix, RBody: string;
 begin
   LPrefix := TUtils.AdjustQuestionToJson(APrefix);
   LSuffix := TUtils.AdjustQuestionToJson(ASuffix);
-  RBody := GetRequestBody(LPrefix, LSuffix, AFilePath);
-
+  RBody := GetRequestBody(LPrefix, LSuffix, ADeclaration, AFilePath);
   LResponse := TRequest.New
     .BaseURL(FSettings.BaseUrlCodeCmpl)
     .ContentType(TConsts.APPLICATION_JSON)
@@ -67,7 +66,7 @@ begin
 end;
 
 // {"language": "pascal", "segments": {"prefix": "code before cursor","suffix": "code after cursor"}}
-function TDelphiAIDevAIRequestCodeCmpl.GetRequestBody(const APrefix, ASuffix, AFilePath: string): string;
+function TDelphiAIDevAIRequestCodeCmpl.GetRequestBody(const APrefix, ASuffix, ADeclaration, AFilePath: string): string;
 begin
   result := '{}';
   var JBody := TJSONObject.Create;
@@ -93,13 +92,24 @@ begin
     if not GitInfo.RemoteUrl.isEmpty then
       SegmentsObj.AddPair('git_url', GitInfo.RemoteUrl);
 
-    // add segments object
-    JBody.AddPair('segments', SegmentsObj);
-
-    // clipboard data info
+    // add clipboard data info to the segments object
     var ClipboardText := Clipboard.AsText;
     if not ClipboardText.IsEmpty then
-      JBody.AddPair('clipboard', ClipboardText);
+      SegmentsObj.AddPair('clipboard', ClipboardText);
+
+    // add declarations data info to the segments object
+    if not ADeclaration.IsEmpty then begin
+      var DecJObj := TJSONObject.Create;
+      DecJObj.AddPair('filepath', RelativeFilePath);
+      DecJObj.AddPair('body', ADeclaration);
+
+      var DeclarationsJArr := TJSONArray.Create;
+      DeclarationsJArr.AddElement(DecJObj);
+      SegmentsObj.AddPair('declarations', DeclarationsJArr);
+    end;
+
+    // add segments object
+    JBody.AddPair('segments', SegmentsObj);
 
     // user info
     if not GitInfo.UserName.IsEmpty then

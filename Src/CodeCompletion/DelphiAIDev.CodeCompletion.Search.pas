@@ -31,6 +31,8 @@ type
     procedure ProcessResponse;
     procedure FormatPrefixCode(var APrefix: string; isImplSection: Boolean);
     procedure FormatSuffixCode(var ASuffix: string);
+    function GetClassName(const ACodeText: string): string;
+    function GetClassDeclaration(const ACodeText, AClassName: string): string;
   protected
     procedure Process(const AContext: IOTAKeyContext);
   public
@@ -68,22 +70,22 @@ begin
   var ind := 0;
   if isImplSection then begin
     // check end; string
-    ind := APrefix.LastIndexOf('end;');
+    ind := APrefix.ToLower.LastIndexOf('end;');
     if ind > 0 then
       APrefix := APrefix.Substring(ind + 4).TrimLeft;
 
     // check type string
-    ind := APrefix.LastIndexOf('type');
+    ind := APrefix.ToLower.LastIndexOf('type');
     if ind > 0 then
       APrefix := APrefix.Substring(ind);
   end else begin
     // check procedure string
-    ind := APrefix.LastIndexOf('procedure');
+    ind := APrefix.ToLower.LastIndexOf('procedure ');
     if ind > 0 then
       APrefix := APrefix.Substring(ind);
 
     // check function string
-    ind := APrefix.LastIndexOf('function');
+    ind := APrefix.ToLower.LastIndexOf('function ');
     if ind > 0 then
       APrefix := APrefix.Substring(ind);
   end;
@@ -98,7 +100,7 @@ const
   MAX_CODE_SIZE = 1000;
 begin
   // first end
-  var ind := ASuffix.IndexOf('end;');
+  var ind := ASuffix.ToLower.IndexOf('end;');
   if ind > 0 then
     ASuffix := ASuffix.Substring(0, ind + 4);
 
@@ -107,9 +109,39 @@ begin
     ASuffix := ASuffix.Substring(0, MAX_CODE_SIZE);
 end;
 
+function TDelphiAIDevCodeCompletionSearch.GetClassDeclaration(const ACodeText,
+  AClassName: string): string;
+begin
+  Result := '';
+  var ind := ACodeText.IndexOf(AClassName + ' = class');
+  if ind > 0 then begin
+    var ClassDecl := ACodeText.Substring(ind);
+    ind := ClassDecl.ToLower.IndexOf('end;');
+    if ind > 0 then
+      Result := ClassDecl.Substring(0, ind + 4);
+  end;
+end;
+
+function TDelphiAIDevCodeCompletionSearch.GetClassName(const ACodeText: string): string;
+begin
+  Result := '';
+
+  // search function or procedure
+  var ind := ACodeText.ToLower.IndexOf('function ');
+  if ind = -1 then
+    ind := ACodeText.ToLower.IndexOf('procedure ');
+
+  // substring class name
+  if ind <> -1 then begin
+    var cl := ACodeText.Substring(ind + 9).Trim;
+    if cl.Contains('.') then
+      Result := cl.Substring(0, cl.IndexOf('.'));
+  end;
+end;
+
 procedure TDelphiAIDevCodeCompletionSearch.Process(const AContext: IOTAKeyContext);
 var
-  LPrefix, LSuffix: string;
+  LPrefix, LSuffix, LDeclaration, LClassName: string;
 begin
   FSettings.ValidateFillingAICodeComplOptions(TShowMsg.No);
 
@@ -124,11 +156,19 @@ begin
     TUtilsOTA.GetTextAroundCursor(LPrefix, LSuffix);
     if LPrefix.Trim = '' then Exit;
 
+    var fullPrefix := LPrefix;
     var isImplSection := LSuffix.Contains('implementation');
+
     FormatPrefixCode(LPrefix, isImplSection);
     FormatSuffixCode(LSuffix);
 
-    FAIRequest.SendRequest(LPrefix, LSuffix, filePath);
+    if not isImplSection then
+      LClassName := GetClassName(LPrefix);
+
+    if not LClassName.IsEmpty then
+      LDeclaration := GetClassDeclaration(fullPrefix, LClassName);
+
+    FAIRequest.SendRequest(LPrefix, LSuffix, LDeclaration, filePath);
 
     FIOTAEditPosition := AContext.EditBuffer.EditPosition;
     Self.ProcessResponse;

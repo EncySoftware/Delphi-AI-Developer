@@ -209,6 +209,7 @@
         <DCCReference Include="..\Src\AI\DelphiAIDev.AI.Response.pas"/>
         <DCCReference Include="..\Src\AI\DelphiAIDev.AI.Request.Chat.pas"/>
         <DCCReference Include="..\Src\AI\DelphiAIDev.AI.Request.CodeCmpl.pas"/>
+        <DCCReference Include="..\Src\Utils\DelphiAIDev.Utils.GitHelper.pas"/>
         <RcItem Include="Img\c4d_Logo.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>c4d_Logo</ResourceId>
@@ -241,7 +242,6 @@
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>c4d_database_execute</ResourceId>
         </RcItem>
-        <DCCReference Include="..\Src\Utils\DelphiAIDev.Utils.GitHelper.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
