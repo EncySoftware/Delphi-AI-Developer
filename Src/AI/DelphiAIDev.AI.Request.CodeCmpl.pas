@@ -20,13 +20,15 @@ type
   private
     FSettings: TDelphiAIDevSettings;
     FResponse: IDelphiAIDevAIResponse;
-    function GetRequestBody(const APrefix, ASuffix, ADeclaration, AFilePath: string): string;
+    function GetRequestBody(const APrefix, ASuffix, AFilePath: string;
+      const ADeclarations: TArray<string>): string;
     function GetResponseText(const AJsonResponse: string): string;
   public
     constructor Create;
 
     property Response: IDelphiAIDevAIResponse read FResponse;
-    procedure SendRequest(const APrefix, ASuffix, ADeclaration, AFilePath : string);
+    procedure SendRequest(const APrefix, ASuffix, AFilePath : string;
+      const ADeclarations: TArray<string>);
   end;
 
 implementation
@@ -37,14 +39,15 @@ begin
   FResponse := TDelphiAIDevAIResponse.New;
 end;
 
-procedure TDelphiAIDevAIRequestCodeCmpl.SendRequest(const APrefix, ASuffix, ADeclaration, AFilePath: string);
+procedure TDelphiAIDevAIRequestCodeCmpl.SendRequest(const APrefix, ASuffix, AFilePath : string;
+  const ADeclarations: TArray<string>);
 var
   LResponse: IResponse;
   LResult, LPrefix, LSuffix, RBody: string;
 begin
   LPrefix := TUtils.AdjustQuestionToJson(APrefix);
   LSuffix := TUtils.AdjustQuestionToJson(ASuffix);
-  RBody := GetRequestBody(LPrefix, LSuffix, ADeclaration, AFilePath);
+  RBody := GetRequestBody(LPrefix, LSuffix, AFilePath, ADeclarations);
   LResponse := TRequest.New
     .BaseURL(FSettings.BaseUrlCodeCmpl)
     .ContentType(TConsts.APPLICATION_JSON)
@@ -66,7 +69,8 @@ begin
 end;
 
 // {"language": "pascal", "segments": {"prefix": "code before cursor","suffix": "code after cursor"}}
-function TDelphiAIDevAIRequestCodeCmpl.GetRequestBody(const APrefix, ASuffix, ADeclaration, AFilePath: string): string;
+function TDelphiAIDevAIRequestCodeCmpl.GetRequestBody(const APrefix, ASuffix, AFilePath: string;
+  const ADeclarations: TArray<string>): string;
 begin
   result := '{}';
   var JBody := TJSONObject.Create;
@@ -98,13 +102,14 @@ begin
       SegmentsObj.AddPair('clipboard', ClipboardText);
 
     // add declarations data info to the segments object
-    if not ADeclaration.IsEmpty then begin
-      var DecJObj := TJSONObject.Create;
-      DecJObj.AddPair('filepath', RelativeFilePath);
-      DecJObj.AddPair('body', ADeclaration);
-
+    if Length(ADeclarations) > 0 then begin
       var DeclarationsJArr := TJSONArray.Create;
-      DeclarationsJArr.AddElement(DecJObj);
+      for var i := 0 to High(ADeclarations) do begin
+        var DecJObj := TJSONObject.Create;
+        DecJObj.AddPair('filepath', RelativeFilePath);
+        DecJObj.AddPair('body', ADeclarations[i]);
+        DeclarationsJArr.AddElement(DecJObj);
+      end;
       SegmentsObj.AddPair('declarations', DeclarationsJArr);
     end;
 

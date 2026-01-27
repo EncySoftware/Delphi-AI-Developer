@@ -111,6 +111,7 @@ contains
   DelphiAIDev.AI.Response in '..\Src\AI\DelphiAIDev.AI.Response.pas',
   DelphiAIDev.AI.Request.Chat in '..\Src\AI\DelphiAIDev.AI.Request.Chat.pas',
   DelphiAIDev.AI.Request.CodeCmpl in '..\Src\AI\DelphiAIDev.AI.Request.CodeCmpl.pas',
-  DelphiAIDev.Utils.GitHelper in '..\Src\Utils\DelphiAIDev.Utils.GitHelper.pas';
+  DelphiAIDev.Utils.GitHelper in '..\Src\Utils\DelphiAIDev.Utils.GitHelper.pas',
+  DelphiAIDev.CodeCompletion.Utils.DelphiCode in '..\Src\CodeCompletion\DelphiAIDev.CodeCompletion.Utils.DelphiCode.pas';
 
 end.

@@ -14,7 +14,8 @@ uses
   DelphiAIDev.Utils,
   DelphiAIDev.Utils.OTA,
   DelphiAIDev.CodeCompletion.Vars,
-  DelphiAIDev.AI.Request.CodeCmpl;
+  DelphiAIDev.AI.Request.CodeCmpl,
+  DelphiAIDev.CodeCompletion.Utils.DelphiCode;
 
 type
   IDelphiAIDevCodeCompletionSearch = interface
@@ -31,8 +32,7 @@ type
     procedure ProcessResponse;
     procedure FormatPrefixCode(var APrefix: string; isImplSection: Boolean);
     procedure FormatSuffixCode(var ASuffix: string);
-    function GetClassName(const ACodeText: string): string;
-    function GetClassDeclaration(const ACodeText, AClassName: string): string;
+    function GetClassName(const ASuffix: string): string;
   protected
     procedure Process(const AContext: IOTAKeyContext);
   public
@@ -109,31 +109,18 @@ begin
     ASuffix := ASuffix.Substring(0, MAX_CODE_SIZE);
 end;
 
-function TDelphiAIDevCodeCompletionSearch.GetClassDeclaration(const ACodeText,
-  AClassName: string): string;
-begin
-  Result := '';
-  var ind := ACodeText.IndexOf(AClassName + ' = class');
-  if ind > 0 then begin
-    var ClassDecl := ACodeText.Substring(ind);
-    ind := ClassDecl.ToLower.IndexOf('end;');
-    if ind > 0 then
-      Result := ClassDecl.Substring(0, ind + 4);
-  end;
-end;
-
-function TDelphiAIDevCodeCompletionSearch.GetClassName(const ACodeText: string): string;
+function TDelphiAIDevCodeCompletionSearch.GetClassName(const ASuffix: string): string;
 begin
   Result := '';
 
   // search function or procedure
-  var ind := ACodeText.ToLower.IndexOf('function ');
+  var ind := ASuffix.ToLower.IndexOf('function ');
   if ind = -1 then
-    ind := ACodeText.ToLower.IndexOf('procedure ');
+    ind := ASuffix.ToLower.IndexOf('procedure ');
 
   // substring class name
   if ind <> -1 then begin
-    var cl := ACodeText.Substring(ind + 9).Trim;
+    var cl := ASuffix.Substring(ind + 9).Trim;
     if cl.Contains('.') then
       Result := cl.Substring(0, cl.IndexOf('.'));
   end;
@@ -141,11 +128,13 @@ end;
 
 procedure TDelphiAIDevCodeCompletionSearch.Process(const AContext: IOTAKeyContext);
 var
-  LPrefix, LSuffix, LDeclaration, LClassName: string;
+  LPrefix, LSuffix: string;
+  LDeclarations: TStringList;
 begin
   FSettings.ValidateFillingAICodeComplOptions(TShowMsg.No);
 
   Screen.Cursor := crHourGlass;
+  LDeclarations := TStringList.Create;
   try
     var filePath := TUtilsOTA.GetCurrentModuleFileName;
     if not FileExists(filePath) then Exit;
@@ -162,18 +151,19 @@ begin
     FormatPrefixCode(LPrefix, isImplSection);
     FormatSuffixCode(LSuffix);
 
-    if not isImplSection then
-      LClassName := GetClassName(LPrefix);
+    if not isImplSection then begin
+      var className := GetClassName(LPrefix);
+      if not className.IsEmpty then
+        LDeclarations := TDelphiCodeUtils.GetClassDeclarations(fullPrefix, className);
+    end;
 
-    if not LClassName.IsEmpty then
-      LDeclaration := GetClassDeclaration(fullPrefix, LClassName);
-
-    FAIRequest.SendRequest(LPrefix, LSuffix, LDeclaration, filePath);
+    FAIRequest.SendRequest(LPrefix, LSuffix, filePath, LDeclarations.ToStringArray);
 
     FIOTAEditPosition := AContext.EditBuffer.EditPosition;
     Self.ProcessResponse;
   finally
     Screen.Cursor := crDefault;
+    LDeclarations.Free;
   end;
 end;
 
